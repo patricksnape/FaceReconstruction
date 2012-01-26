@@ -1,4 +1,6 @@
 function U = myGPCA(Z, K, flag1)
+%myGPCA Calculate K principal components for matrix Z
+%   flag1 - 0 is preserve variance, 1 is widen by eigenvalue
 
 % c = 100;
 % ni = 3;
