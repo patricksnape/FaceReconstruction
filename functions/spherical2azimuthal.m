@@ -31,7 +31,7 @@ for i = 1:N
     
     % xs
     projected(1, :) = kprime .* cos(thetak) .* sin(phik - phiav);
-    %ys
+    % ys
     projected(2, :) = kprime .* (cos(thetaav) .* sin(thetak) + cos(thetaav) .* cos(thetak) .* cos(phik - phiav));
     
     % reshape back to column vector

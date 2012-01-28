@@ -48,13 +48,19 @@ function phis = azmiuth(xs, ys)
 end
 
 function psis = psi(c, thetaav, xs, ys)
-    if (thetaav == (pi/2))
-        psis = -(rdivide(xs, ys));
-    elseif (thetaav == -(pi/2))
-        psis = rdivide(xs, ys);
-    else
-        numer = xs .* sin(c);
-        denom = c .* cos(thetaav) .* cos(c) - ys .* sin(thetaav) .* sin(c);
-        psis = rdivide(numer, denom);
+    N = numel(thetaav);
+    % row of zeros
+    psis = zeros(1, N);
+        
+    for i = 1:N
+        if (thetaav(i) == (pi/2))
+            psis(i) = -(xs(i) / ys(i));
+        elseif (thetaav(i) == -(pi/2))
+            psis(i) = xs(i) / ys(i);
+        else
+            numer = xs(i) * sin(c(i));
+            denom = c(i) * cos(thetaav(i)) * cos(c(i)) - ys(i) * sin(thetaav(i)) * sin(c(i));
+            psis(i) = numer / denom;
+        end
     end
 end
