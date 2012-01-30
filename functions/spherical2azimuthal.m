@@ -25,13 +25,15 @@ for i = 1:N
     thetak = elevation(kset(3, :));
     phik = azimuth(kset(1, :), kset(2, :));
     
+    % cos(c) = sin(thetaav) * sin(thetak) + cos(thetaav) * cos(thetak) * cos[phik - phiav]
     cosc = sin(thetaav) .* sin(thetak) + cos(thetaav) .* cos(thetak) .* cos(phik - phiav);
     c = acos(cosc);
+    % kprime = c / sin(c)
     kprime = rdivide(c, sin(c));
     
-    % xs
+    % xs = kprime * cos(thetak) * sin[phik - phiav]
     projected(1, :) = kprime .* cos(thetak) .* sin(phik - phiav);
-    % ys
+    % ys = kprime * (cos(thetaav) * sin(phik) + sin(thetaav) * cos(thetak) * cos[phik - phiav]
     projected(2, :) = kprime .* (cos(thetaav) .* sin(phik) - sin(thetaav) .* cos(thetak) .* cos(phik - phiav));
     
     % reshape back to column vector
@@ -45,10 +47,12 @@ disp('Finished Calculating Azimuthal Equidistant Projection');
 
 end
 
+% theta = (pi / 2) - asin(nz)
 function thetas = elevation(zs)
      thetas = (pi / 2) - asin(zs);
 end
 
+% phi = atan(ny,nx)
 function phis = azimuth(xs, ys)
      phis = atan(rdivide(ys, xs));
 end

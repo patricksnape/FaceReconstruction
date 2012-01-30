@@ -26,9 +26,9 @@ for i = 1:N
     c = sqrt(xs .^ 2 + ys .^ 2);
     recipc = rdivide(ones(1, numel(c)), c);
     
-    % thetas
+    % thetas = asin[cos(c) * sin(thetaav) - (1/c) * yk * sin(c) * % cos(thetav)]
     angles(1, :) = asin(cos(c) .* sin(thetaav) - recipc .* ys .* sin(c) .* cos(thetaav));
-    % phis
+    % phis = phiav + atan(psi)
     angles(2, :) = phiav + atan(psi(c, thetaav, xs, ys));
     
     % convert angles to coordinates
@@ -50,14 +50,20 @@ disp('Finished Calculating Coordinates...');
 
 end
 
+% theta = (pi / 2) - asin(nz)
 function thetas = elevation(zs)
      thetas = (pi / 2) - asin(zs);
 end
 
+% phi = atan(ny/nx)
 function phis = azimuth(xs, ys)
      phis = atan(rdivide(ys, xs));
 end
 
+% psi = thetaav != (pi / 2) -> 
+%           xk * sin(c) / c * cos(thetaav) * cos(c) - yk * sin(thetav) * sin(c)
+%       thetaav == (pi/2)   -> -(xk/yk)
+%       thetaav == -(pi/2)  -> xk/yk
 function psis = psi(c, thetaav, xs, ys)
     N = numel(thetaav);
     % row of zeros
