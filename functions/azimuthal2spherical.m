@@ -10,7 +10,7 @@ out = zeros(size(projections, 1) * (3/2), size(projections, 2));
 vec_mean_normals = reshape(mean_normal, [3 numel(mean_normal)/3]);
 
 thetaav = elevation(vec_mean_normals(3, :));
-phiav = azmiuth(vec_mean_normals(1, :), vec_mean_normals(2, :));
+phiav = azimuth(vec_mean_normals(1, :), vec_mean_normals(2, :));
 
 disp('Calculating Coordinates...');
 parfor_progress(N);
@@ -23,7 +23,7 @@ for i = 1:N
     % theta,phi
     angles = zeros(2, size(kset, 2));
     
-    c = sqrt(kset(1, :) .^ 2 + kset(2, :) .^ 2);
+    c = sqrt(xs .^ 2 + ys .^ 2);
     recipc = rdivide(ones(1, numel(c)), c);
     
     % thetas
@@ -54,7 +54,7 @@ function thetas = elevation(zs)
      thetas = (pi / 2) - asin(zs);
 end
 
-function phis = azmiuth(xs, ys)
+function phis = azimuth(xs, ys)
      phis = atan(rdivide(ys, xs));
 end
 
