@@ -1,6 +1,8 @@
-function visualize_sphere(points, index, count)
-%VISUALIZE_SPHERE Summary of this function goes here
-%   Detailed explanation goes here
+function visualize_sphere(points, index, count, col)
+%VISUALIZE_SPHERE Plot a sphere and the points given
+%   Expects points to be unit vectors. Color is optional
+
+if ~exist('col','var'), col = 'r.'; end
 
 first_object = reshape(points(:, index), [3 numel(points(:, index))/3]);
 
@@ -10,7 +12,7 @@ axis equal;
 
 hold on;
 
-plot3(first_object(1,1:count), first_object(2,1:count), first_object(3,1:count), 'r.');
+plot3(first_object(1,1:count), first_object(2,1:count), first_object(3,1:count), col);
 
 hold off;
 
