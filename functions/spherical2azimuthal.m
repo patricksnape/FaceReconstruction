@@ -1,4 +1,4 @@
-function [out, thetak, phik] = spherical2azimuthal(normals, mean_normal)
+function out = spherical2azimuthal(normals, mean_normal)
 %AEP Calculates the Azimuthal Equidistant Projection for each set of normals
 %   Given a set of training image normals project them on to a euclidean
 %   plane using the azimuthal equidistant projection. Requires the mean
