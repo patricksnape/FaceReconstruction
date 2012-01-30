@@ -7,13 +7,12 @@ function [normal,normalf] = compute_normal(vertex,face)
 %   normal(i,:) is the normal at vertex i.
 %   normalf(j,:) is the normal at face j.
 %
-%   Copyright (c) 2004 Gabriel Peyré
+%   Copyright (c) 2004 Gabriel Peyrï¿½
 
 [vertex,face] = check_face_vertex(vertex,face);
 
 nface = size(face,2);
 nvert = size(vertex,2);
-normal = zeros(3, nvert);
 
 % unit normals to the faces
 normalf = crossp( vertex(:,face(2,:))-vertex(:,face(1,:)), ...
