@@ -34,11 +34,8 @@ for i = 1:N
     
     % convert angles to coordinates
     vectors = zeros(size(angles, 1) * (3/2), size(angles, 2));
-    % xs = sin(phi) * cos(theta)
     vectors(1, :) = cos(angles(2, :)) .* sin(angles(1, :));
-    % ys = cos(phi) * sin(theta)
     vectors(2, :) = sin(angles(2, :)) .* sin(angles(1, :));
-    % zs = sin(theta)
     vectors(3, :) = cos(angles(1, :));
     
     % reshape back to column vector
