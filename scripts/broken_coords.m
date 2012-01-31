@@ -1,0 +1,3 @@
+orig = [-0.999685649452840;-0.0149286842795506;-0.0201429060399588;];
+avg_orig = [-0.999716374704997;-0.0235257837547052;-0.00370238374896844;];
+result = azimuthal2spherical(spherical2azimuthal(orig, avg_orig), avg_orig);
