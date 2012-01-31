@@ -27,18 +27,19 @@ for i = 1:N
     recipc = rdivide(ones(1, numel(c)), c);
     
     % thetas = asin[cos(c) * sin(thetaav) - (1/c) * yk * sin(c) * % cos(thetav)]
-    angles(1, :) = asin(cos(c) .* sin(thetaav) - recipc .* ys .* sin(c) .* cos(thetaav));
+    angles(1, :) = asin(cos(c) .* sin(thetaav) + recipc .* ys .* sin(c) .* cos(thetaav));
     % phis = phiav + atan(psi)
-    angles(2, :) = phiav + atan(psi(c, thetaav, xs, ys));
+    [numer, denom] = psi(c, thetaav, xs, ys);
+    angles(2, :) = phiav + atan2(numer, denom);
     
     % convert angles to coordinates
     vectors = zeros(size(angles, 1) * (3/2), size(angles, 2));
     % xs = sin(phi) * cos(theta)
-    vectors(1, :) = sin(angles(2, :)) .* cos(angles(1, :));
+    vectors(1, :) = cos(angles(2, :)) .* sin(angles(1, :));
     % ys = cos(phi) * sin(theta)
-    vectors(2, :) = cos(angles(2, :)) .* sin(angles(1, :));
+    vectors(2, :) = sin(angles(2, :)) .* sin(angles(1, :));
     % zs = sin(theta)
-    vectors(3, :) = sin(angles(1, :));
+    vectors(3, :) = cos(angles(1, :));
     
     % reshape back to column vector
     out(:, i) = reshape(vectors, [], 1);
@@ -57,27 +58,29 @@ end
 
 % phi = atan(ny/nx)
 function phis = azimuth(xs, ys)
-     phis = atan(rdivide(ys, xs));
+     phis = atan2(ys, xs);
 end
 
 % psi = thetaav != (pi / 2) -> 
 %           xk * sin(c) / c * cos(thetaav) * cos(c) - yk * sin(thetav) * sin(c)
 %       thetaav == (pi/2)   -> -(xk/yk)
 %       thetaav == -(pi/2)  -> xk/yk
-function psis = psi(c, thetaav, xs, ys)
+function [numer, denom] = psi(c, thetaav, xs, ys)
     N = numel(thetaav);
     % row of zeros
-    psis = zeros(1, N);
+    numer = zeros(1, N);
+    denom = zeros(1, N);
         
     for i = 1:N
-        if (thetaav(i) == (pi/2))
-            psis(i) = -(xs(i) / ys(i));
-        elseif (thetaav(i) == -(pi/2))
-            psis(i) = xs(i) / ys(i);
+        if (abs(thetaav(i) - (pi/2)) < eps)
+            numer(i) = -xs(i);
+            denom(i) = -ys(i);
+        elseif (abs(thetaav(i) - (-pi/2)) < eps)
+            numer(i) = xs(i);
+            denom(i) = ys(i);
         else
-            numer = xs(i) * sin(c(i));
-            denom = c(i) * cos(thetaav(i)) * cos(c(i)) - ys(i) * sin(thetaav(i)) * sin(c(i));
-            psis(i) = numer / denom;
+            numer(i) = xs(i) * sin(c(i));
+            denom(i) = c(i) * cos(thetaav(i)) * cos(c(i)) - ys(i) * sin(thetaav(i)) * sin(c(i));
         end
     end
 end

@@ -34,7 +34,7 @@ for i = 1:N
     % xs = kprime * cos(thetak) * sin[phik - phiav]
     projected(1, :) = kprime .* cos(thetak) .* sin(phik - phiav);
     % ys = kprime * (cos(thetaav) * sin(phik) - sin(thetaav) * cos(thetak) * cos[phik - phiav]
-    projected(2, :) = kprime .* (cos(thetaav) .* sin(phik) - sin(thetaav) .* cos(thetak) .* cos(phik - phiav));
+    projected(2, :) = kprime .* (cos(thetaav) .* sin(thetak) - sin(thetaav) .* cos(thetak) .* cos(phik - phiav));
     
     % reshape back to column vector
     out(:, i) = reshape(projected, [], 1);
@@ -54,5 +54,5 @@ end
 
 % phi = atan(ny,nx)
 function phis = azimuth(xs, ys)
-     phis = atan(rdivide(ys, xs));
+     phis = atan2(ys, xs);
 end
