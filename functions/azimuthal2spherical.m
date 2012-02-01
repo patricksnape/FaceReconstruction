@@ -32,12 +32,6 @@ for i = 1:N
     [numer, denom] = psi(c, thetaav, xs, ys);
     angles(2, :) = phiav + atan2(numer, denom);
     
-    % Hack?
-    phis = angles(2, :);
-    phis(phis < -pi) = phis(phis < -pi) + pi;
-    phis(phis > pi) = phis(phis > pi) - pi;
-    angles(2,:) = phis;
-    
     % convert angles to coordinates
     vectors = zeros(size(angles, 1) * (3/2), size(angles, 2));
     vectors(1, :) = cos(angles(2, :)) .* sin(angles(1, :));

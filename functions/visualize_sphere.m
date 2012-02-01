@@ -1,6 +1,6 @@
 function visualize_sphere(points, index, count, col)
 %VISUALIZE_SPHERE Plot a sphere and the points given
-%   Expects points to be unit vectors. Color is optional
+%   Expects points to be unit vectors in a column. Color is optional
 
 if ~exist('col', 'var'), col = 'r.'; end
 
