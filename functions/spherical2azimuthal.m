@@ -12,6 +12,7 @@ out = zeros(size(normals, 1) * (2/3), size(normals, 2));
 vec_mean_normals = reshape(mean_normal, [3 numel(mean_normal)/3]);
 
 thetaav = elevation(vec_mean_normals(3, :));
+thetaav(thetaav >pi/2 ) = thetaav(thetaav>pi/2) - pi;
 phiav = azimuth(vec_mean_normals(1, :), vec_mean_normals(2, :));
 
 disp('Calculating Azimuthal Equidistant Projection...');
@@ -23,6 +24,7 @@ for i = 1:N
     projected = zeros(2, size(kset, 2));
     
     thetak = elevation(kset(3, :));
+    thetak(thetak >pi/2 ) = thetak(thetak>pi/2) - pi;
     phik = azimuth(kset(1, :), kset(2, :));
     
     % cos(c) = sin(thetaav) * sin(thetak) + cos(thetaav) * cos(thetak) * cos[phik - phiav]
@@ -49,7 +51,7 @@ end
 
 % theta = (pi / 2) - asin(nz)
 function thetas = elevation(zs)
-     thetas = (pi / 2) - asin(zs);
+     thetas = (pi / 2) - asin(zs); %% elevation between 0, pi and 0 at z=1
 end
 
 % phi = atan(ny,nx)

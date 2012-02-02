@@ -10,6 +10,7 @@ out = zeros(size(projections, 1) * (3/2), size(projections, 2));
 vec_mean_normals = reshape(mean_normal, [3 numel(mean_normal)/3]);
 
 thetaav = elevation(vec_mean_normals(3, :));
+thetaav(thetaav >pi/2 ) = thetaav(thetaav>pi/2) - pi;
 phiav = azimuth(vec_mean_normals(1, :), vec_mean_normals(2, :));
 
 disp('Calculating Coordinates...');
@@ -28,6 +29,9 @@ for i = 1:N
     
     % thetas = asin[cos(c) * sin(thetaav) - (1/c) * yk * sin(c) * % cos(thetav)]
     angles(1, :) = asin(cos(c) .* sin(thetaav) + recipc .* ys .* sin(c) .* cos(thetaav));
+    el = angles(1, :);
+    el(el < 0 ) = el(el<0) + pi;
+    angles(1, :) = el;
     % phis = phiav + atan(psi)
     [numer, denom] = psi(c, thetaav, xs, ys);
     angles(2, :) = phiav + atan2(numer, denom);
