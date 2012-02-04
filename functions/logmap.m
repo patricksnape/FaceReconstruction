@@ -8,7 +8,7 @@ dist_nbx = norm(b + x);
 % dist(b,x)
 dist_bx = norm(x - b);
 
-alpha = acos((4 + (dist_nbx ^ 2) - (dist_bx ^ 2)) / (4 * dist_bx));
+alpha = acos((4 + (dist_nbx ^ 2) - (dist_bx ^ 2)) / (4 * dist_nbx));
 
 vprime = ((2 * (b + x)) / (dist_nbx * cos(alpha))) - b;
 
@@ -17,4 +17,3 @@ theta = acos(b .* x);
 v = b + ((theta .* (vprime - b)) / norm(vprime - b));
 
 end
-
