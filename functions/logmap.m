@@ -12,7 +12,7 @@ alpha = acos((4 + (dist_nbx ^ 2) - (dist_bx ^ 2)) / (4 * dist_nbx));
 
 vprime = ((2 * (b + x)) / (dist_nbx * cos(alpha))) - b;
 
-theta = acos(b .* x);
+theta = acos(dot(b,x));
 
 v = b + ((theta .* (vprime - b)) / norm(vprime - b));
 
