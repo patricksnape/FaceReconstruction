@@ -1,4 +1,4 @@
-function mu = sphericalmean(normals)
+function mu = sphericalmedian(normals)
 %SPHERICALMEAN Summary of this function goes here
 %   Detailed explanation goes here
 
