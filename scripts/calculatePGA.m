@@ -10,9 +10,9 @@ for i = 1:3:N
     % column vector
     normalp = reshape(normalp, [], 1);
     mu = [1;1;1]; % sphericalmedian(normalp);
-    
+
+    mus(:, ceil(i / 3)) = mu;  
     progressbar(i, N);
-    mus(:, ceil(i / 3)) = mu;
 end
 disp(' ');
 disp('Finished generating intrinsic means for each normal.');
@@ -41,7 +41,7 @@ for i = 1:K
     D(:, i) = reshape(vk, [], 1);
     progressbar(i, K);
 end
-dis(' ');
+disp(' ');
 disp('Finished generating D.');
 
 clear normals;
