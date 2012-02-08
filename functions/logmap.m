@@ -8,12 +8,6 @@ dist_nbx = norm(b + x);
 % dist(b,x)
 dist_bx = norm(x - b);
 
-% otherwise we end up with a divide by 0
-if (dist_bx == 0)
-    v = b;
-    return;
-end
-
 alpha = acos((4 + (dist_nbx ^ 2) - (dist_bx ^ 2)) / (4 * dist_nbx));
 
 vprime = ((2 * (b + x)) / (dist_nbx * cos(alpha))) - b;
