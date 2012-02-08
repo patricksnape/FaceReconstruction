@@ -17,8 +17,6 @@ while not_done
         l = logmap(mu, vec_normals(:, i));
         if (~any(isnan(l)))
             delta_mu = delta_mu + logmap(mu, vec_normals(:, i));
-        else
-            disp('NaN encountered');
         end
     end
     delta_mu = delta_mu / N;
