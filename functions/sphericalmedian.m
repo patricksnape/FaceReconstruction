@@ -9,7 +9,7 @@ N = size(vec_normals, 2);
 mu = vec_normals(:, 1);
 delta_mu = [0;0;0];
 
-tol = 10 ^ -5;
+tol = 10 ^ -3;
 not_done = true;
 
 while not_done
