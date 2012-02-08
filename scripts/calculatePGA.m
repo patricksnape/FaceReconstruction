@@ -9,7 +9,7 @@ for i = 1:3:N
     normalp = [training_set.normals(i, :); training_set.normals(i+1, :); training_set.normals(i+2, :)];
     % column vector
     normalp = reshape(normalp, [], 1);
-    mu = [1;1;1]; % sphericalmedian(normalp);
+    mu = sphericalmedian(normalp);
 
     mus(:, ceil(i / 3)) = mu;  
     progressbar(i, N);
