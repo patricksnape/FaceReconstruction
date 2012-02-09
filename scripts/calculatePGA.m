@@ -1,11 +1,14 @@
 %% Assumes generateTrainingSet has been run. Calculates all spherical medians.
 
 % Allows me to use a subset of the training_set
-normals_set = training_set.normals;
+normals_set = training_set.normals(:, 1:10);
 mean_normals_set = mean_surface_norm(normals_set);
 
-N = size(normals_set, 1) / 3;
-mus = zeros(3, N);
+% need to calculate for every point (53490) but we have a single column so
+% need to run over all 160470 in 3s
+% N = number of vertices * 3
+N = size(normals_set, 1);
+mus = zeros(3, N/3);
 
 textprogressbar('Generating intrinsic means for each normal: ');
 for i = 1:3:N
@@ -28,13 +31,17 @@ clear mu;
 
 %% Calculate D
 
+% K = number of faces
 K = size(normals_set, 2);
+% N = number of vertices
+N = N / 3;
+
 D = zeros(N * 3, K);
-normals = reshape(normals_set, [3 numel(normals_set)/3]);
 
 textprogressbar('Generating D: ');
 % for each face
 for i = 1:K
+    normals = reshape(normals_set(:, i), [3 numel(normals_set(:, i))/3]);
     vk = zeros(3, N);
     % for all normals
     parfor k = 1:N
@@ -64,3 +71,5 @@ disp('Finished generating DAvg.');
 
 clear normals;
 clear vk;
+clear i;
+clear k;
