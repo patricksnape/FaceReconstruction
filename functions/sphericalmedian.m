@@ -17,7 +17,7 @@ while not_done
     for i = 1:N
         l = logmap(mu, vec_normals(:, i));
         if (~any(isnan(l)))
-            delta_mu = delta_mu + logmap(mu, vec_normals(:, i));
+            delta_mu = delta_mu + l;
         end
     end
     delta_mu = delta_mu / N;
