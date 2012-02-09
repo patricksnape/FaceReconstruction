@@ -13,7 +13,7 @@ tol = 10 ^ -3;
 not_done = true;
 
 while not_done
-    delta_mu1 = delta_mu;
+    mu1 = mu;
     for i = 1:N
         l = logmap(mu, vec_normals(:, i));
         if (~any(isnan(l)))
@@ -23,7 +23,8 @@ while not_done
     delta_mu = delta_mu / N;
     
     mu = expmap(mu, delta_mu);
-    not_done = (norm(delta_mu-delta_mu1) > tol);
+    not_done = (norm(mu-mu1) > tol);
 end
+
 end
 
