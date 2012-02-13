@@ -13,7 +13,7 @@ tol = 10 ^ -3;
 not_done = true;
 
 while not_done
-    prev_mu = mu;
+    prev_mu = delta_mu;
     
     for i = 1:N
         l = logmap(mu, vec_normals(:, i));
@@ -24,7 +24,7 @@ while not_done
     delta_mu = delta_mu / N;
     
     mu = expmap(mu, delta_mu);
-    not_done = (norm(mu-prev_mu) > tol);
+    not_done = (norm(delta_mu-prev_mu) > tol);
 end
 
 end
