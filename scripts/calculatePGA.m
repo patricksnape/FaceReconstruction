@@ -1,7 +1,7 @@
 %% Assumes generateTrainingSet has been run. Calculates all spherical medians.
 
 % Allows me to use a subset of the training_set
-normals_set = training_set.normals(:, 1:3);
+normals_set = training_set.normals;
 mean_normals_set = mean_surface_norm(normals_set);
 
 % need to calculate for every point (53490) but we have a single column so
@@ -73,3 +73,5 @@ clear normals;
 clear vk;
 clear i;
 clear k;
+
+save('pga.mat');
