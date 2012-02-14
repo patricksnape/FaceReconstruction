@@ -1,4 +1,4 @@
-function [mu] = sphericalmedian(normals)
+function [delta_mu] = sphericalmedian(guess, normals)
 %SPHERICALMEAN Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -6,26 +6,12 @@ function [mu] = sphericalmedian(normals)
 vec_normals = reshape(normals, [3 numel(normals)/3]);
 
 N = size(vec_normals, 2);
-mu = vec_normals(:, 1);
-delta_mu = [0;0;0];
+delta_mu = 0;
 
-tol = 10 ^ -3;
-not_done = true;
-
-while not_done
-    prev_mu = delta_mu;
-    
-    for i = 1:N
-        l = logmap(mu, vec_normals(:, i));
-        if (~any(isnan(l)))
-            delta_mu = delta_mu + l;
-        end
-    end
-    delta_mu = delta_mu / N;
-    
-    mu = expmap(mu, delta_mu);
-    not_done = (norm(delta_mu-prev_mu) > tol);
+for i = 1:N
+    l = logmap(guess, vec_normals(:, i));
+    delta_mu = delta_mu + norm(l);
 end
+delta_mu = delta_mu / N;
 
 end
-

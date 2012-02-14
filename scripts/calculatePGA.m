@@ -1,7 +1,7 @@
 %% Assumes generateTrainingSet has been run. Calculates all spherical medians.
 
 % Allows me to use a subset of the training_set
-normals_set = training_set.normals(:, 1:10);
+normals_set = training_set.normals;
 mean_normals_set = mean_surface_norm(normals_set);
 
 % need to calculate for every point (53490) but we have a single column so
@@ -15,7 +15,7 @@ for i = 1:3:N
     normalp = [normals_set(i, :); normals_set(i+1, :); normals_set(i+2, :)];
     % column vector
     normalp = reshape(normalp, [], 1);
-    mu = sphericalmedian(normalp);
+    mu = fminsearch(@(x) sphericalmedian(x, normalp), normalp(1:3));
 
     mus(:, ceil(i / 3)) = mu;  
     textprogressbar((ceil((i/N)*100)));
@@ -73,3 +73,5 @@ clear normals;
 clear vk;
 clear i;
 clear k;
+
+save('pga.mat');
