@@ -97,13 +97,6 @@ end
 vertex = vertex';
 face = face';
 
-if strcmp(name, 'bunny') || strcmp(name, 'pieta')
-%    vertex = -vertex;
-end
-if strcmp(name, 'armadillo')
-    vertex(:,3) = -vertex(:,3);
-end
-
 if sanity_check && (size(face,2)~=3 || (size(vertex,2)~=3 && size(vertex,2)~=2))
     error('face or vertex does not have correct format.');
 end
@@ -144,51 +137,6 @@ if ~isempty(normal)
 end
 
 cameramenu;
-switch lower(name)
-    case 'hammerheadtriang'
-        view(150,-45);
-    case 'horse'
-        view(134,-61);
-    case 'skull'
-        view(21.5,-12);
-    case 'mushroom'
-        view(160,-75);
-    case 'bunny'
-%        view(0,-55);
-        view(0,90);
-    case 'david_head'
-        view(-100,10);
-    case 'screwdriver'
-        view(-10,25);
-    case 'pieta'
-        view(15,31);
-    case 'mannequin'
-        view(25,15);
-        view(27,6);
-    case 'david-low'
-        view(40,3);
-    case 'david-head'
-        view(-150,5);
-    case 'brain'
-        view(30,40);
-    case 'pelvis'
-        view(5,-15);
-    case 'fandisk'
-        view(36,-34);
-    case 'earth'
-        view(125,35);
-    case 'camel'
-        view(-123,-5);
-        camroll(-90);
-    case 'beetle'
-        view(-117,-5);
-        camroll(-90);
-        zoom(.85);
-    case 'cat'
-        view(-60,15);
-    case 'nefertiti'
-        view(-20,65);
-end
 view_param = getoptions(options, 'view_param', []);
 if not(isempty(view_param))
     view(view_param(1),view_param(2));
@@ -198,7 +146,3 @@ axis tight;
 axis equal;
 shading(shading_type);
 camlight;
-
-if strcmp(name, 'david50kf') || strcmp(name, 'hand')
-    zoom(.85);
-end
