@@ -1,3 +1,4 @@
+base_morphable_model = load_model('morphable_model.mat');
 depthmap = convertMeshDepthMap(reshape2colvector(double(base_morphable_model.shapeMU)), 231);
 texture = imread('data/images/mut1.ppm');
 
