@@ -1,4 +1,4 @@
-function [ u, v ] = NormalsFromDepthMap( zBuffer )
+function [ u, v, w ] = NormalsFromDepthMap( zBuffer )
  
 hh=double(zBuffer);
   
@@ -13,8 +13,11 @@ X_1=X_1-min(X_1(:));
 Y_1=Y_1-min(Y_1(:));
 [u,v,~]=surfnorm(X_1,Y_1,hh);
 clear hh X_1 Y_1;
-u=-u; v=-v;
 
-% mesh(Integ_FrankotChellappa(x,-y,Z));
+u = -u; 
+v = -v;
+w = sqrt(1 - u.^2 - v.^2);
+
+% mesh(Integ_FrankotChellappa(x,-y,z));
 end
 
