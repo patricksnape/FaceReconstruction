@@ -4,10 +4,10 @@ texture = imread('data/images/mut1.ppm');
 
 figure(1);
 clf;
-aligned = AlignFace(depthmap, 155, 142, 40, 155, 75, 113, 113, 145);
+aligned = AlignFace(depthmap, 155, 142, 40, 155, 52, 115, 115, 180);
 mesh(aligned);
 
 figure(2);
 clf;
-aligned = AlignFace(texture, 301, 348, 474, 301, 336, 390, 390, 437);
+aligned = AlignFace(texture, 304, 349, 475, 294, 311, 390, 390, 458);
 image(aligned);
