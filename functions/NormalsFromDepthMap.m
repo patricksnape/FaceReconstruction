@@ -16,7 +16,7 @@ clear hh X_1 Y_1;
 
 u = -u; 
 v = -v;
-w = sqrt(1 - u.^2 - v.^2);
+w = -sqrt(1 - u.^2 - v.^2);
 
 % mesh(Integ_FrankotChellappa(x,-y,z));
 end
