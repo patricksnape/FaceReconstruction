@@ -2,6 +2,8 @@ base_morphable_model = load_model('morphable_model.mat');
 depthmap = convertMeshDepthMap(reshape2colvector(double(base_morphable_model.shapeMU)), 231);
 texture = imread('data/images/mut1.ppm');
 
+% Use the corner of the eye
+
 figure(1);
 clf;
 aligned = AlignFace(depthmap, 155, 142, 40, 155, 52, 115, 115, 180);
