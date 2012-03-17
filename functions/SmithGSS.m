@@ -18,9 +18,10 @@ function [ b, n ] = SmithGSS( image, P, s )
 %    the recovered needle map.
 % 8. Make n(i,j) = nprimeprime(i,j) and return to Step 2.
 
+% Texture must be converted to greyscale
 
-    n = EstimateNormals(image);
-    imtheta = calcTheta(image);
+    theta = acos(double(image / max(max(image))));
+    n = EstimateNormals(image, theta);
     npp = n;
 
     while sum(acos(dot(reshape2colvector(n), reshape2colvector(npp)))) > eps
@@ -33,12 +34,8 @@ function [ b, n ] = SmithGSS( image, P, s )
         vprime = (P * P') * v0;
 
         nprime = azimuthal2spherical(vprime);
-        npp = OnConeRotation(imtheta, nprime, s);
+        npp = OnConeRotation(theta, nprime, s);
     end
-end
-
-function t = calcTheta(image)
-    t = acos(image);
 end
 
 function n = OnConeRotation(theta, nprime, s)
@@ -58,10 +55,9 @@ function n = OnConeRotation(theta, nprime, s)
     n = phi * nprime;
 end
 
-function nestimates = EstimateNormals(image)
-    [dx, dy] = gradient(image);
+function nestimates = EstimateNormals(image, theta)
+    [dx, dy] = gradient(double(image));
     phi = atan2(-dy, -dx);
-    theta = acos(image);
     
     nestimates = [
                   sin(theta) .* cos(phi); 
