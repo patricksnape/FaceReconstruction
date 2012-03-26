@@ -31,7 +31,9 @@ function [ b, n ] = SmithGSS( texture, U, s )
         % avgN = mean_surface_norm(n);
         v0 = npp; %spherical2azimuthal(n, avgN);
 
+        % vector of best-fit parameters
         b = U' * v0;
+        % transformed coordinates
         vprime = U * b;
 
         %nprime = azimuthal2spherical(vprime);
