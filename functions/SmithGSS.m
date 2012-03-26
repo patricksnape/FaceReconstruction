@@ -1,4 +1,4 @@
-function [ b, n ] = SmithGSS( image, U, s )
+function [ b, n ] = SmithGSS( texture, U, s )
 %SMITHGSS Summary of this function goes here
 % 1. Calculate an initial estimate of the field of surface normals n using (12).
 % 2. Each normal in the estimated field n undergoes an
@@ -20,59 +20,76 @@ function [ b, n ] = SmithGSS( image, U, s )
 
 % Texture must be converted to greyscale
 
-    theta = (double(image / max(max(image))) * 2) - 1;
-    n = EstimateNormals(image, theta);
+    % shift so it is in the range -1 to 1
+    theta = acos(((double(texture) / double(max(max(texture)))) * 2) - 1);
+    n = EstimateNormals(texture, theta);
     npp = n;
 
     while sum(acos(dot(reshape2colvector(n), reshape2colvector(npp)))) > eps
         % Loop until convergence
         n = npp;
-        avgN = mean_surface_norm(n);
-        v0 = spherical2azimuthal(n, avgN);
+        % avgN = mean_surface_norm(n);
+        v0 = npp; %spherical2azimuthal(n, avgN);
 
         b = U' * v0;
         vprime = U * b;
 
-        nprime = azimuthal2spherical(vprime);
-        npp = OnConeRotation(theta, nprime, s);
+        %nprime = azimuthal2spherical(vprime);
+        npp = OnConeRotation(theta, vprime, s);
     end
 end
 
 function n = OnConeRotation(theta, nprime, s)
-    [u, v, w] = cross(nprime, s);
-    alpha = theta - acos(dot(nprime, s));
+    % 3 x N format
+    nprime = reshape2colvector(nprime);
+    % repmat to match 3 x N format above
+    svec = repmat(s', 1, size(nprime, 2));
+    
+    % cross product and break in to row vectors
+    C = cross(nprime, svec);
+    u = C(1, :);
+    v = C(2, :);
+    w = C(3, :);
+    
+    % shift so it is in the range -1 to 1??
+    d = dot(nprime, svec);
+    % reshape theta to row vector
+    theta = reshape(theta.' , 1, []);
+    alpha = theta - acos(d);
     
     c = cos(alpha);
     cprime = 1 - c;
     s = sin(alpha);
     
     phi = [ 
-            c + u^2 * cprime, -w * s + u * v * cprime, v * s + u * w * cprime;
-            w * s + u * v * cprime, c + v^2 * cprime, -u * s + v * w * cprime;
-            -v * s + u * w * cprime, u * s + v * w * cprime, c + w^2 * cprime;
+            c + u.^2 .* cprime, -w .* s + u .* v .* cprime, v .* s + u .* w .* cprime;
+            w .* s + u .* v .* cprime, c + v.^2 .* cprime, -u .* s + v .* w .* cprime;
+            -v .* s + u .* w .* cprime, u .* s + v .* w .* cprime, c + w.^2 .* cprime;
           ];
+      
+    % extract the phi matrices back out (row cell of phis)
+    phi = mat2cell(phi, 3, ones(1, size(phi, 2)/3) * 3);
     
-    n = phi * nprime;
+    % multiple every phi matrix by each normal
+    n = cell2mat(cellfun(@(x,y) x*y, phi, mat2cell(nprime, 3, ones(1, size(nprime, 2))), 'UniformOutput', false));
+    n = reshape(n, [], 1);
 end
 
-function nestimates = EstimateNormals(image, theta)
-    [dx, dy] = gradient(double(image));
+function nestimates = EstimateNormals(texture, theta)
+    [dx, dy] = gradient(double(texture));
+    % Could have some division by zero...
     norm = sqrt(dx.^2 + dy.^2);
-    sinphi = dy / norm;
-    cosphi = dx / norm;
+    sinphi = dy ./ norm;
+    sinphi(isnan(sinphi)) = 0;
+    cosphi = dx ./ norm;
+    cosphi(isnan(cosphi)) = 0;
     clear norm;
     
     nestimates = [
-                  sin(theta) .* cosphi; 
+                  sin(theta) .* cosphi;
                   sin(theta) .* sinphi;
                   cos(theta);
                  ];
 
-    % convert to 3 x N matrix by concatenating the rows of an image
-    nestimates = mat2cell(nestimates, 3 * ones(1, size(nestimates, 1) / 3), ones(1, size(nestimates, 2)));
-    nestimates = nestimates.';
-    nestimates = horzcat(nestimates{:});
-    
-    % convert 3xN rows to a column matrix
-    nestimates = reshape(nestimates, [], 1);
+    nestimates = Image2ColVector(nestimates);
 end

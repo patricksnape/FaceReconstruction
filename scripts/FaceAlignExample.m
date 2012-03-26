@@ -6,8 +6,8 @@ texture = imread('data/images/mut1.ppm');
 
 figure(1);
 clf;
-aligned = AlignFace(depthmap, 155, 142, 40, 155, 52, 115, 115, 180);
-mesh(aligned);
+depthmap = AlignFace(depthmap, 155, 142, 40, 155, 52, 115, 115, 180);
+mesh(depthmap);
 
 figure(2);
 clf;
