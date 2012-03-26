@@ -1,4 +1,4 @@
-function [ b, n ] = SmithGSS( image, P, s )
+function [ b, n ] = SmithGSS( image, U, s )
 %SMITHGSS Summary of this function goes here
 % 1. Calculate an initial estimate of the field of surface normals n using (12).
 % 2. Each normal in the estimated field n undergoes an
@@ -20,7 +20,7 @@ function [ b, n ] = SmithGSS( image, P, s )
 
 % Texture must be converted to greyscale
 
-    theta = acos(double(image / max(max(image))));
+    theta = (double(image / max(max(image))) * 2) - 1;
     n = EstimateNormals(image, theta);
     npp = n;
 
@@ -30,8 +30,8 @@ function [ b, n ] = SmithGSS( image, P, s )
         avgN = mean_surface_norm(n);
         v0 = spherical2azimuthal(n, avgN);
 
-        b = P' * v0;
-        vprime = (P * P') * v0;
+        vprime = U' * v0;
+        vprime = U * vprime;
 
         nprime = azimuthal2spherical(vprime);
         npp = OnConeRotation(theta, nprime, s);
@@ -57,11 +57,14 @@ end
 
 function nestimates = EstimateNormals(image, theta)
     [dx, dy] = gradient(double(image));
-    phi = atan2(-dy, -dx);
+    norm = sqrt(dx.^2 + dy.^2);
+    sinphi = dy / norm;
+    cosphi = dx / norm;
+    clear norm;
     
     nestimates = [
-                  sin(theta) .* cos(phi); 
-                  sin(theta) .* sin(phi);
+                  sin(theta) .* cosphi; 
+                  sin(theta) .* sinphi;
                   cos(theta);
                  ];
 
