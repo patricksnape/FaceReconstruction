@@ -30,8 +30,8 @@ function [ b, n ] = SmithGSS( image, U, s )
         avgN = mean_surface_norm(n);
         v0 = spherical2azimuthal(n, avgN);
 
-        vprime = U' * v0;
-        vprime = U * vprime;
+        b = U' * v0;
+        vprime = U * b;
 
         nprime = azimuthal2spherical(vprime);
         npp = OnConeRotation(theta, nprime, s);
