@@ -1,4 +1,4 @@
-function [ b, n ] = SmithGSS( texture, U, s )
+function [ b, n ] = SmithGSS( texture, U, mu, s )
 %SMITHGSS Summary of this function goes here
 % 1. Calculate an initial estimate of the field of surface normals n using (12).
 % 2. Each normal in the estimated field n undergoes an
@@ -26,15 +26,16 @@ function [ b, n ] = SmithGSS( texture, U, s )
     npp = n;
 
     while sum(acos(dot(reshape2colvector(n), reshape2colvector(npp)))) > eps
+        sum(acos(dot(reshape2colvector(n), reshape2colvector(npp))))
         % Loop until convergence
         n = npp;
         % avgN = mean_surface_norm(n);
         v0 = npp; %spherical2azimuthal(n, avgN);
 
         % vector of best-fit parameters
-        b = U' * v0;
+        b = U' * (v0 - mu);
         % transformed coordinates
-        vprime = U * b;
+        vprime = (U * b) + mu;
 
         %nprime = azimuthal2spherical(vprime);
         npp = OnConeRotation(theta, vprime, s);
@@ -79,6 +80,7 @@ end
 
 function nestimates = EstimateNormals(texture, theta)
     [dx, dy] = gradient(double(texture));
+    
     % Could have some division by zero...
     norm = sqrt(dx.^2 + dy.^2);
     sinphi = dy ./ norm;
@@ -87,11 +89,9 @@ function nestimates = EstimateNormals(texture, theta)
     cosphi(isnan(cosphi)) = 0;
     clear norm;
     
-    nestimates = [
-                  sin(theta) .* cosphi;
-                  sin(theta) .* sinphi;
-                  cos(theta);
-                 ];
+    nestimates(:,:,1) = sin(theta) .* cosphi;
+    nestimates(:,:,2) = sin(theta) .* sinphi;
+    nestimates(:,:,3) = cos(theta);
 
-    nestimates = Image2ColVector(nestimates);
+    nestimates = Image2ColVector3(nestimates(:,:,1), nestimates(:,:,2), nestimates(:,:,3));
 end
