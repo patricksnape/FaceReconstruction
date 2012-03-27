@@ -33,11 +33,11 @@ template_pts=[1,1;
               template_nx,1]';
 
 if (ndims(image) == 2)
-    output = quadtobox(double(squeeze(image)),template_pts,M,'bilinear');
+    output = quadtobox(double(squeeze(image)),template_pts,M,'bilinear')/double(max(max(image)));
 else
-    output(:,:,1)=quadtobox(double(squeeze(image(:,:,1))),template_pts,M,'bilinear')./256;
-    output(:,:,2)=quadtobox(double(squeeze(image(:,:,2))),template_pts,M,'bilinear')./256;
-    output(:,:,3)=quadtobox(double(squeeze(image(:,:,3))),template_pts,M,'bilinear')./256;       
+    output(:,:,1)=quadtobox(double(squeeze(image(:,:,1))),template_pts,M,'bilinear')./double(max(max(image(:,:,1))));
+    output(:,:,2)=quadtobox(double(squeeze(image(:,:,2))),template_pts,M,'bilinear')./double(max(max(image(:,:,2))));
+    output(:,:,3)=quadtobox(double(squeeze(image(:,:,3))),template_pts,M,'bilinear')./double(max(max(image(:,:,3))));       
 end
 
 end
