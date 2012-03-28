@@ -1,4 +1,4 @@
-function shapes = generateRandomShapes(base_morphable_model)
+function shapes = generateRandomShapes(model)
 
 %% base_morphable_model = load_model('morphable_model.mat')
 
@@ -14,8 +14,8 @@ alphaArray = model_size * (alphas ./ repmat(sum(abs(alphas), 1), 199, 1));
 %% Define Texture Parameters
 
 % Currently unused (only need shape)
-betas = randn(199, 199);
-betaArray = model_size * (betas ./ repmat(sum(abs(betas), 1), 199, 1));
+%betas = randn(199, 199);
+%betaArray = model_size * (betas ./ repmat(sum(abs(betas), 1), 199, 1));
 
 
 %% Generate Data
@@ -23,11 +23,11 @@ betaArray = model_size * (betas ./ repmat(sum(abs(betas), 1), 199, 1));
 display('Creating face shapes...')
 
 % Empty training set
-shapes = zeros(size(base_morphable_model.shapeMU, 1), 200);
+shapes = zeros(size(model.shapeMean, 1), 200);
 
-shapeMU = base_morphable_model.shapeMU;
-shapePC = base_morphable_model.shapePC;
-shapeEV = base_morphable_model.shapeEV;
+shapeMU = model.shapeMean;
+shapePC = model.shapePC;
+shapeEV = model.shapeEV;
 
 parfor_progress(199);
 

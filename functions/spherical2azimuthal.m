@@ -1,8 +1,17 @@
 function out = spherical2azimuthal(normals, mean_normal)
-%AEP Calculates the Azimuthal Equidistant Projection for each set of normals
-%   Given a set of training image normals project them on to a euclidean
-%   plane using the azimuthal equidistant projection. Requires the mean
-%   surface normal at each point to have already been calculated
+%SPHERICAL2AZIMUTHAL Calculates the Azimuthal Equidistant Projection for each set of normals
+%
+% Given a set of training image normals project them on to a euclidean
+% plane using the azimuthal equidistant projection. Requires the mean
+% surface normal at each point to have already been calculated
+%
+% normals should be a column vector divisible by three 
+% (x1, y1, y2, x2, y2, y3, ...)
+% mean_normal should be a column vector divisible by three
+% (x1, y1, y2, x2, y2, y3, ...)
+%
+% Returns a column vector of the projections
+% (x1, y1, x2, y2, ...)
 
 N = size(normals, 2);
 % from x,y,z to x,y
@@ -12,11 +21,9 @@ out = zeros(size(normals, 1) * (2/3), size(normals, 2));
 vec_mean_normals = reshape(mean_normal, [3 numel(mean_normal)/3]);
 
 thetaav = elevation(vec_mean_normals(3, :));
-thetaav(thetaav >pi/2 ) = thetaav(thetaav>pi/2) - pi;
+% round thetas back in to the range [-pi/2, pi/2]
+thetaav(thetaav > pi/2) = thetaav(thetaav > pi/2) - pi;
 phiav = azimuth(vec_mean_normals(1, :), vec_mean_normals(2, :));
-
-disp('Calculating Azimuthal Equidistant Projection...');
-parfor_progress(N);
 
 for i = 1:N
     % as vector matrix
@@ -24,7 +31,8 @@ for i = 1:N
     projected = zeros(2, size(kset, 2));
     
     thetak = elevation(kset(3, :));
-    thetak(thetak >pi/2 ) = thetak(thetak>pi/2) - pi;
+    % round thetas back in to the range [-pi/2, pi/2]
+    thetak(thetak > pi/2 ) = thetak(thetak > pi/2) - pi;
     phik = azimuth(kset(1, :), kset(2, :));
     
     % cos(c) = sin(thetaav) * sin(thetak) + cos(thetaav) * cos(thetak) * cos[phik - phiav]
@@ -40,12 +48,7 @@ for i = 1:N
     
     % reshape back to column vector
     out(:, i) = reshape(projected, [], 1);
-    
-    parfor_progress;
 end
-parfor_progress(0);
-
-disp('Finished Calculating Azimuthal Equidistant Projection');
 
 end
 

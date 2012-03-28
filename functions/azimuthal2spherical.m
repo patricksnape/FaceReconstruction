@@ -1,6 +1,20 @@
 function out = azimuthal2spherical( projections, mean_normal )
 %AZIMUTHAL2SPHERICAL Given a set of points projected using azimuthal
 %equidistant projection return their coordinates on a unit sphere
+%
+% Given a set of projected coordinates re-project them back in to the
+% original spherical coordinate space using the inverse azimuthal 
+% equidistant projection. Requires the mean surface normal of the 
+% original training set at each point to have already been calculated.
+%
+% projections should be a column vector divisible by two 
+% (x1, y1, x2, y2, ...)
+% mean_normal should be a column vector divisible by three
+% (x1, y1, y2, x2, y2, y3, ...)
+%
+% Returns a column vector of the projections mapped back in the original
+% spherical coordinate space 
+% (x1, y1, z1, x2, y2, z2, ...)
 
 N = size(projections, 2);
 % from x,y to x,y,z
@@ -10,11 +24,9 @@ out = zeros(size(projections, 1) * (3/2), size(projections, 2));
 vec_mean_normals = reshape(mean_normal, [3 numel(mean_normal)/3]);
 
 thetaav = elevation(vec_mean_normals(3, :));
-thetaav(thetaav >pi/2 ) = thetaav(thetaav>pi/2) - pi;
+% round thetas back in to the range [-pi/2, pi/2]
+thetaav(thetaav > pi/2) = thetaav(thetaav > pi/2) - pi;
 phiav = azimuth(vec_mean_normals(1, :), vec_mean_normals(2, :));
-
-disp('Calculating Coordinates...');
-parfor_progress(N);
 
 for i = 1:N
     % as vector matrix
@@ -44,11 +56,7 @@ for i = 1:N
     
     % reshape back to column vector
     out(:, i) = reshape(vectors, [], 1);
-    
-    parfor_progress;
 end
-parfor_progress(0);
-disp('Finished Calculating Coordinates...');
 
 end
 
