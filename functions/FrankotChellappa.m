@@ -1,4 +1,4 @@
-function hh=Integ_FrankotChellappa(dzdx,dzdy,pz)
+function hh = FrankotChellappa(dzdx,dzdy,pz)
 % function z = fcint(dzdx,dzdy,pz)
 % Z = fcint(Px,Py,Pz)
 %   Integrate surface nmormals, Px, Py, Pz, using the Frankot-Chellappa

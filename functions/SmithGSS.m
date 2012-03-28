@@ -1,4 +1,4 @@
-function [ b, n ] = SmithGSS( texture, U, mu, s )
+function [ error, b, n ] = SmithGSS( texture, U, mu, s )
 %SMITHGSS Summary of this function goes here
 % 1. Calculate an initial estimate of the field of surface normals n using (12).
 % 2. Each normal in the estimated field n undergoes an
@@ -22,24 +22,28 @@ function [ b, n ] = SmithGSS( texture, U, mu, s )
 
     % shift so it is in the range -1 to 1
     theta = acos(((double(texture) / double(max(max(texture)))) * 2) - 1);
-    n = EstimateNormals(texture, theta);
+    n = mu;%EstimateNormals(texture, theta);
     npp = n;
+    i = 1;
 
-    while sum(acos(dot(reshape2colvector(n), reshape2colvector(npp)))) > eps
-        sum(acos(dot(reshape2colvector(n), reshape2colvector(npp))))
+    while sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp))))) > 400
+        error(i) = sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp)))));
+        i = i + 1;
+        sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp)))))
         % Loop until convergence
         n = npp;
-        % avgN = mean_surface_norm(n);
-        v0 = npp; %spherical2azimuthal(n, avgN);
+        v0 = n;%spherical2azimuthal(n, mu);
 
         % vector of best-fit parameters
-        b = U' * (v0 - mu);
+        b = U' * (v0);% - mu);
         % transformed coordinates
-        vprime = (U * b) + mu;
+        vprime = (U * b);% + mu;
 
-        %nprime = azimuthal2spherical(vprime);
+        %nprime = azimuthal2spherical(vprime, mu);
         npp = OnConeRotation(theta, vprime, s);
     end
+    
+    n = ColVectorToImage3(npp, size(texture, 1), size(texture, 2));
 end
 
 function n = OnConeRotation(theta, nprime, s)
@@ -54,27 +58,43 @@ function n = OnConeRotation(theta, nprime, s)
     v = C(2, :);
     w = C(3, :);
     
-    % shift so it is in the range -1 to 1??
-    d = dot(nprime, svec);
+    % cos(q) = a.b/|a||b| ??
+    nnorm = bsxfun(@rdivide, nprime, colnorm(nprime));
+    d = dot(nnorm, svec);
+    
     % reshape theta to row vector
-    theta = reshape(theta.' , 1, []);
+    theta = Image2ColVector(theta)';
     alpha = theta - acos(d);
     
     c = cos(alpha);
     cprime = 1 - c;
     s = sin(alpha);
     
-    phi = [ 
-            c + u.^2 .* cprime, -w .* s + u .* v .* cprime, v .* s + u .* w .* cprime;
-            w .* s + u .* v .* cprime, c + v.^2 .* cprime, -u .* s + v .* w .* cprime;
-            -v .* s + u .* w .* cprime, u .* s + v .* w .* cprime, c + w.^2 .* cprime;
-          ];
-      
-    % extract the phi matrices back out (row cell of phis)
-    phi = mat2cell(phi, 3, ones(1, size(phi, 2)/3) * 3);
+    % setup structures
+    N = size(u, 2);  
+    n = zeros(size(nprime));
+    phi = zeros(3, 3);
     
-    % multiple every phi matrix by each normal
-    n = cell2mat(cellfun(@(x,y) x*y, phi, mat2cell(nprime, 3, ones(1, size(nprime, 2))), 'UniformOutput', false));
+    for i=1:N
+        phi(1,1) = c(i) + u(i)^2 * cprime(i);
+        phi(1,2) = -w(i) * s(i) + u(i) * v(i) * cprime(i);
+        phi(1,3) = v(i) * s(i) + u(i) * w(i) * cprime(i);
+        
+        phi(2,1) = w(i) * s(i) + u(i) * v(i) * cprime(i);
+        phi(2,2) = c(i) + v(i)^2 * cprime(i);
+        phi(2,3) = -u(i) * s(i) + v(i) * w(i) * cprime(i);
+        
+        phi(3,1) = -v(i) * s(i) + u(i) * w(i) * cprime(i);
+        phi(3,2) = u(i) * s(i) + v(i) * w(i) * cprime(i);
+        phi(3,3) = c(i) + w(i)^2 * cprime(i);
+          
+        n(:, i) = phi * nprime(:, i);
+    end
+    
+    % Normalize the result ??
+    n = bsxfun(@rdivide, n, colnorm(n));
+    
+    % reshape back to column vector
     n = reshape(n, [], 1);
 end
 
