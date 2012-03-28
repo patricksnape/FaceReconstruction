@@ -1,4 +1,4 @@
-function output = AlignFace(image, L_E_Y, Nose_Y, Low_Y, R_E_Y, L_E_X, Nose_X, Low_X, R_E_X)
+function output = AlignFace(image, Nose_Y, L_E_Y, R_E_Y, Low_Y, Nose_X, L_E_X, R_E_X, Low_X)
 
 pts=[L_E_Y Nose_Y Low_Y R_E_Y; L_E_X Nose_X Low_X R_E_X];
 % figure; imshow(Mask, []);  colormap(gray); axis equal; hold on
