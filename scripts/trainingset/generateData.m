@@ -27,17 +27,16 @@ function [I_model] = generateData(model, fp, rhoArray, alphaArray, betaArray, re
     
     
     %% Normals computation
-       
-    % Compute the normals at the vertices and triangles
-    [N, triangleArrayNormals] = compute_normal(S(1:3, :), model.triangleArray);
     
-    % Flip normals and add homogenized row
+    % Compute the normals at the vertices
+    [N, triangleArrayNormals] = compute_normal(S(1:3,:), model.triangleArray);
+    
     N = -N;
-    N(4,:) = zeros(size(N, 2), 1);
-    
-    % Flip triangle normals and add homogenized row
-    triangleArrayNormals(4,:) = zeros(size(triangleArrayNormals, 2), 1);
     triangleArrayNormals = -triangleArrayNormals;
+    
+    N(4,:) = 0;
+    triangleArrayNormals(4,:) = 0;
+    
     
     %% Image rendering
 
@@ -47,11 +46,12 @@ function [I_model] = generateData(model, fp, rhoArray, alphaArray, betaArray, re
 
     % Warp the shape, triangle normals and shape normals using the 
     % view matrix and the total rotation matrix
-    [W, ~, ~] = warp(S, triangleArrayNormals, triangleArrayNormals, viewMatrix, R_total);
+    [W, triangleArrayNormals, N] = warp(S, triangleArrayNormals, N, viewMatrix, R_total);
     
     % Discard all those triangles whose normals are not facing the
     % camera
     [triangleArray, triangleArrayNormals] = cull(model.triangleArray, triangleArrayNormals);
+    %triangleArray = model.triangleArray;
 
     % Project the warped shape onto the image plane
     [P] = project(W, projectionMatrix, projectionType);
@@ -67,15 +67,13 @@ function [I_model] = generateData(model, fp, rhoArray, alphaArray, betaArray, re
     [normalBuffer, ~] = rasterize(triangleArray, P, N, resolution);
     
     % Rasterize Image
-    [xyzBuffer, ~] = rasterize(triangleArray, P, S - repmat([0 0 min(S(3,:)) 0]', 1, size(S,2)), resolution);
+    [~, W2, ~] = warp(S, S, S, viewMatrix, R_total);
+    [xyzBuffer, ~] = rasterize(triangleArray, P, W2 - repmat([0 0 min(S(3,:)) 0]', 1, size(S,2)), resolution);
     
     % Project the shape
     [xy] = compute_anchor_points_projection(P(:,fp), resolution);
-    xy = xy(1:3,:);
-    xy(1,:) = xy(1,:) / resolution(1);
-    xy(2,:) = xy(2,:) / resolution(2);
-    xy(3,:) = xy(3,:);
-    
+    xy = xy(1:2,:);
+
     
     %% Save Image 
     
