@@ -12,3 +12,5 @@ for i=1:199
                                    shape(3,1), ... % Right Eye X
                                    shape(4,1));    % Chin X
 end
+
+clear i shape

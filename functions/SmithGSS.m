@@ -22,16 +22,19 @@ function [ error, b, n ] = SmithGSS( texture, U, mu, s )
 
     % shift so it is in the range -1 to 1
     theta = acos(((double(texture) / double(max(max(texture)))) * 2) - 1);
-    n = mu;%EstimateNormals(texture, theta);
-    npp = n;
+    n = EstimateNormalsAvg(mu, theta);
+    npp = zeros(size(n));
     i = 1;
 
-    while sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp))))) > 400
+    while sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp))))) > 30
         error(i) = sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp)))));
-        i = i + 1;
         sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp)))))
+        
+        if i > 1;
+            n = npp;
+        end
+        
         % Loop until convergence
-        n = npp;
         v0 = n;%spherical2azimuthal(n, mu);
 
         % vector of best-fit parameters
@@ -41,6 +44,7 @@ function [ error, b, n ] = SmithGSS( texture, U, mu, s )
 
         %nprime = azimuthal2spherical(vprime, mu);
         npp = OnConeRotation(theta, vprime, s);
+        i = i + 1;
     end
     
     n = ColVectorToImage3(npp, size(texture, 1), size(texture, 2));
@@ -106,6 +110,24 @@ function nestimates = EstimateNormals(texture, theta)
     sinphi = dy ./ norm;
     sinphi(isnan(sinphi)) = 0;
     cosphi = dx ./ norm;
+    cosphi(isnan(cosphi)) = 0;
+    clear norm;
+    
+    nestimates(:,:,1) = sin(theta) .* cosphi;
+    nestimates(:,:,2) = sin(theta) .* sinphi;
+    nestimates(:,:,3) = cos(theta);
+
+    nestimates = Image2ColVector3(nestimates(:,:,1), nestimates(:,:,2), nestimates(:,:,3));
+end
+
+function nestimates = EstimateNormalsAvg(mu, theta)   
+    muim = ColVectorToImage3(mu, size(theta, 1), size(theta, 2));
+    
+    % Could have some division by zero...
+    norm = sqrt(muim(:,:,1).^2 + muim(:,:,2).^2 +muim(:,:,3));
+    sinphi = muim(:,:,2) ./ norm;
+    sinphi(isnan(sinphi)) = 0;
+    cosphi = muim(:,:,1) ./ norm;
     cosphi(isnan(cosphi)) = 0;
     clear norm;
     
