@@ -22,6 +22,8 @@ function [ error, b, n ] = SmithGSS( texture, U, mu, s )
 
     % shift so it is in the range -1 to 1
     theta = acos(((double(texture) / double(max(max(texture)))) * 2) - 1);
+    theta(theta > pi/2 ) = theta(theta > pi/2) - pi;
+    
     n = EstimateNormalsAvg(mu, theta);
     npp = zeros(size(n));
     i = 1;
@@ -38,9 +40,11 @@ function [ error, b, n ] = SmithGSS( texture, U, mu, s )
         v0 = n;%spherical2azimuthal(n, mu);
 
         % vector of best-fit parameters
-        b = U' * (v0);% - mu);
+        b = U' * (v0 - mu);
         % transformed coordinates
-        vprime = (U * b);% + mu;
+        vprime = (U * b) + mu;
+        vprime = reshape2colvector(vprime);
+        vprime = reshape(bsxfun(@rdivide, vprime, colnorm(vprime)), [], 1);
 
         %nprime = azimuthal2spherical(vprime, mu);
         npp = OnConeRotation(theta, vprime, s);
@@ -63,12 +67,14 @@ function n = OnConeRotation(theta, nprime, s)
     w = C(3, :);
     
     % cos(q) = a.b/|a||b| ??
-    nnorm = bsxfun(@rdivide, nprime, colnorm(nprime));
-    d = dot(nnorm, svec);
+    d = dot(nprime, svec);
     
     % reshape theta to row vector
     theta = Image2ColVector(theta)';
-    alpha = theta - acos(d);
+    theta1 = acos(d);
+    theta1(theta1 > pi/2 ) = theta1(theta1 > pi/2) - pi;
+    alpha = theta - theta1;
+    alpha(alpha < 0) = alpha(alpha <0) + (2 * pi);
     
     c = cos(alpha);
     cprime = 1 - c;
@@ -121,10 +127,12 @@ function nestimates = EstimateNormals(texture, theta)
 end
 
 function nestimates = EstimateNormalsAvg(mu, theta)   
-    muim = ColVectorToImage3(mu, size(theta, 1), size(theta, 2));
+    muim = reshape2colvector(mu);
+    muim = bsxfun(@rdivide, muim, colnorm(muim));
+    muim = ColVectorToImage3(reshape(muim,[],1), size(theta, 1), size(theta, 2));
     
     % Could have some division by zero...
-    norm = sqrt(muim(:,:,1).^2 + muim(:,:,2).^2 +muim(:,:,3));
+    norm = sqrt(muim(:,:,1).^2 + muim(:,:,2).^2);
     sinphi = muim(:,:,2) ./ norm;
     sinphi(isnan(sinphi)) = 0;
     cosphi = muim(:,:,1) ./ norm;
