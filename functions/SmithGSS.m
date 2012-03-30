@@ -43,6 +43,8 @@ function [ error, b, n ] = SmithGSS( texture, U, mu, s )
         b = U' * (v0 - mu);
         % transformed coordinates
         vprime = (U * b) + mu;
+        
+        % Normalize
         vprime = reshape2colvector(vprime);
         vprime = reshape(bsxfun(@rdivide, vprime, colnorm(vprime)), [], 1);
 
@@ -62,9 +64,11 @@ function n = OnConeRotation(theta, nprime, s)
     
     % cross product and break in to row vectors
     C = cross(nprime, svec);
+    
     u = C(1, :);
     v = C(2, :);
     w = C(3, :);
+   
     
     % cos(q) = a.b/|a||b| ??
     d = dot(nprime, svec);
@@ -74,7 +78,7 @@ function n = OnConeRotation(theta, nprime, s)
     theta1 = acos(d);
     theta1(theta1 > pi/2 ) = theta1(theta1 > pi/2) - pi;
     alpha = theta - theta1;
-    alpha(alpha < 0) = alpha(alpha <0) + (2 * pi);
+    alpha(alpha < 0) = alpha(alpha < 0) + (2 * pi);
     
     c = cos(alpha);
     cprime = 1 - c;
@@ -109,7 +113,8 @@ function n = OnConeRotation(theta, nprime, s)
 end
 
 function nestimates = EstimateNormals(texture, theta)
-    [dx, dy] = gradient(double(texture));
+    % n ??
+    [dx, dy] = longRangeGradient(double(texture), 170);
     
     % Could have some division by zero...
     norm = sqrt(dx.^2 + dy.^2);
