@@ -1,4 +1,4 @@
-function [ error, b, n ] = SmithGSS( texture, U, mu, s )
+function [ error, b, n ] = SmithGSS( texture, U, mu, s, theta)
 %SMITHGSS Summary of this function goes here
 % 1. Calculate an initial estimate of the field of surface normals n using (12).
 % 2. Each normal in the estimated field n undergoes an
@@ -21,8 +21,8 @@ function [ error, b, n ] = SmithGSS( texture, U, mu, s )
 % Texture must be converted to greyscale
 
     % shift so it is in the range -1 to 1
-    theta = acos(((double(texture) / double(max(max(texture)))) * 2) - 1);
-    theta(theta > pi/2 ) = theta(theta > pi/2) - pi;
+    %theta = abs(acos(((double(texture) / double(max(max(texture)))))));
+    %theta(theta > pi/2 ) = theta(theta > pi/2) - pi;
     
     n = EstimateNormalsAvg(mu, theta);
     npp = zeros(size(n));
@@ -64,23 +64,21 @@ function n = OnConeRotation(theta, nprime, s)
     
     % cross product and break in to row vectors
     C = cross(nprime, svec);
+    reshape(bsxfun(@rdivide, C, colnorm(C)), [], 1);
     
     u = C(1, :);
     v = C(2, :);
     w = C(3, :);
-   
     
     % cos(q) = a.b/|a||b| ??
-    d = dot(nprime, svec);
+    d = abs(dot(nprime, svec));
     
     % reshape theta to row vector
     theta = Image2ColVector(theta)';
     
-    beta = acos(d);
-    beta(beta > pi/2 ) = beta(beta > pi/2) - pi;
-    
+    beta = acos(d);    
     alpha = theta - beta;
-    alpha(alpha < 0) = alpha(alpha < 0) + (2 * pi);
+    alpha = - alpha;
     
     c = cos(alpha);
     cprime = 1 - c;
