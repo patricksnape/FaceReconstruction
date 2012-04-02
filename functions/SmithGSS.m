@@ -75,9 +75,11 @@ function n = OnConeRotation(theta, nprime, s)
     
     % reshape theta to row vector
     theta = Image2ColVector(theta)';
-    theta1 = acos(d);
-    theta1(theta1 > pi/2 ) = theta1(theta1 > pi/2) - pi;
-    alpha = theta - theta1;
+    
+    beta = acos(d);
+    beta(beta > pi/2 ) = beta(beta > pi/2) - pi;
+    
+    alpha = theta - beta;
     alpha(alpha < 0) = alpha(alpha < 0) + (2 * pi);
     
     c = cos(alpha);
