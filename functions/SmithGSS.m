@@ -20,7 +20,8 @@ function [ error, b, n ] = SmithGSS( texture, U, mu, s, theta)
 
 % Texture must be converted to greyscale
 
-    % shift so it is in the range -1 to 1
+    % normalize so it is in the range 0 to 1
+    % intensity can never be < 0
     theta = abs(acos(((double(texture) / double(max(max(texture)))))));
     theta(theta < 0) = 0;
     
@@ -28,7 +29,7 @@ function [ error, b, n ] = SmithGSS( texture, U, mu, s, theta)
     npp = zeros(size(n));
     i = 1;
 
-    while sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp))))) > 30
+    while sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp))))) > 0.01
         error(i) = sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp)))));
         sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp)))))
         
@@ -70,16 +71,17 @@ function n = OnConeRotation(theta, nprime, s)
     v = C(2, :);
     w = C(3, :);
     
-    % cos(q) = a.b/|a||b| ??
+    % expects |nprime|  = |sec| = 1
+    % represents intensity and can never be < 0
     d = dot(nprime, svec);
     d(d < 0) = 0;
     
     % reshape theta to row vector
     theta = Image2ColVector(theta)';
-    theta(theta < 0) = 0;
     
     beta = acos(d);    
     alpha = theta - beta;
+    % flip alpha so that it rotates along the correct axis
     alpha = -alpha;
     
     c = cos(alpha);
