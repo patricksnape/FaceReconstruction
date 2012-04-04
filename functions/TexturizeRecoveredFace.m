@@ -2,30 +2,35 @@ function TexturizeRecoveredFace(texture, normals, albedo)
     Nx = normals(:, :, 1);
     Ny = normals(:, :, 2);
     Nz = normals(:, :, 3);
+    
+    [sizeY sizeX] = size(Nx);
+    totalLength = sizeX * sizeY;
 
-    color_mean =  [reshape(texture(:,:,1)', size(albedo,1) * size(albedo,2),1)'; ...
-                   reshape(texture(:,:,2)', size(albedo,1) * size(albedo,2),1)'; ... 
-                   reshape(texture(:,:,3)', size(albedo,1) * size(albedo,2),1)'];
+    color_mean =  [ reshape(texture(:,:,1)', totalLength, 1)'; ...
+                    reshape(texture(:,:,2)', totalLength, 1)'; ... 
+                    reshape(texture(:,:,3)', totalLength, 1)' ];
 
     % create the mesh grid and perform the delauney triangulation 
-    [ny_1 nx_1] = size(Nx);
-    [X_1, Y_1]  = meshgrid(1:(ny_1), 1:(nx_1));
+    [X_1, Y_1]  = meshgrid(1:(sizeY), 1:(sizeX));
     triangles   = delaunay(X_1, Y_1);
     
     % extract the reconstructed height map
     hh = FrankotChellappa(-Nx, Ny, Nz);
+    hh_1_T= (hh(1:(sizeY), 1:(sizeX)))';
 
-    hh_1_T= (hh(1:(ny_1), 1:(nx_1)))';
+    % construct mesh vertices
+    X_vertex = X_1(1:totalLength);
+    Y_vertex = Y_1(1:totalLength);
+    Z_vertex = hh_1_T(1:totalLength);
 
-    X_vertex = X_1(1:size(X_1, 1) * size(X_1, 2));
-    Y_vertex = Y_1(1:size(Y_1, 1) * size(Y_1, 2));
-    Z_vertex = hh_1_T(1:size(Y_1, 1) * size(Y_1, 2));
+    vertices = [ X_vertex; ...
+                 Y_vertex; ...
+                 Z_vertex ];
 
-    vertices = [X_vertex ;Y_vertex ; Z_vertex];
-
-    normals =  [ Nx(1:size(X_1,1) * size(X_1,2)); ...
-                 Ny(1:size(X_1,1) * size(X_1,2)); ...
-                 Nz(1:size(X_1,1) * size(X_1,2)) ];
+    % reconstruct normals to 3xN
+    normals =  [ Nx(1:totalLength); ...
+                 Ny(1:totalLength); ...
+                 Nz(1:totalLength) ];
 
     %options.normal = normals';
     options.face_vertex_color = color_mean';
