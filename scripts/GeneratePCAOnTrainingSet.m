@@ -15,7 +15,7 @@ Un = myGPCA(XNnorm, 199, 0);
 %% Texture - Assumes I_model exists
 
 Xt = cellfun(@(x) getfield(x, 'alignedTexture'), I_model, 'UniformOutput', false);
-Xt = cellfun(@(x) Image2ColVector3(x), Xt, 'UniformOutput', false);
+Xt = cellfun(@(x) Image2ColVector(x), Xt, 'UniformOutput', false);
 Xt = cell2mat(Xt');
 
 XTavg = sum(Xt, 2);
