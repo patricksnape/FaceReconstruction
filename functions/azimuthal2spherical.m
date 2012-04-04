@@ -22,6 +22,7 @@ out = zeros(size(projections, 1) * (3/2), size(projections, 2));
 
 % reshape to vector matrix
 vec_mean_normals = reshape(mean_normal, [3 numel(mean_normal)/3]);
+vec_mean_normals = bsxfun(@rdivide, vec_mean_normals, colnorm(vec_mean_normals));
 
 thetaav = elevation(vec_mean_normals(3, :));
 % round thetas back in to the range [-pi/2, pi/2]
@@ -40,7 +41,7 @@ for i = 1:N
     recipc = rdivide(ones(1, numel(c)), c);
     
     % thetas = asin[cos(c) * sin(thetaav) - (1/c) * yk * sin(c) * % cos(thetav)]
-    angles(1, :) = asin(cos(c) .* sin(thetaav) + recipc .* ys .* sin(c) .* cos(thetaav));
+    angles(1, :) = real(asin(cos(c) .* sin(thetaav) + recipc .* ys .* sin(c) .* cos(thetaav)));
     el = angles(1, :);
     el(el < 0 ) = el(el<0) + pi;
     angles(1, :) = el;

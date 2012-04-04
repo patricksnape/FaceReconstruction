@@ -19,6 +19,7 @@ out = zeros(size(normals, 1) * (2/3), size(normals, 2));
 
 % reshape to vector matrix
 vec_mean_normals = reshape(mean_normal, [3 numel(mean_normal)/3]);
+vec_mean_normals = bsxfun(@rdivide, vec_mean_normals, colnorm(vec_mean_normals));
 
 thetaav = elevation(vec_mean_normals(3, :));
 % round thetas back in to the range [-pi/2, pi/2]
