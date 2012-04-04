@@ -57,7 +57,7 @@ function nl = calcnl(nu, l, m, n)
     for i=1:P
        np = nu(:, i);
        np = ColVectorToImage3(np, m, n);
-       nl(:, i) = Image2ColVector(dot(np, l1, 3))'; % Px1
+       nl(:, i) = Image2ColVector(dot(np, l1, 3))';
     end
 end
 
