@@ -20,16 +20,18 @@ function [ error, b, n ] = SmithGSS( texture, U, mu, s, theta)
 
 % Texture must be converted to greyscale
 
-    % normalize so it is in the range 0 to 1
-    % intensity can never be < 0
-    theta = abs(acos(((double(texture) / double(max(max(texture)))))));
-    theta(theta < 0) = 0;
+    if (nargin < 5)
+        % normalize so it is in the range 0 to 1
+        % intensity can never be < 0
+        theta = abs(acos(((double(texture) / double(max(max(texture)))))));
+        theta(theta < 0) = 0;
+    end
     
     n = EstimateNormalsAvg(mu, theta);
     npp = zeros(size(n));
     i = 1;
 
-    while sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp))))) > 0.01
+    while sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp))))) > 1
         error(i) = sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp)))));
         sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp)))))
         
@@ -38,19 +40,20 @@ function [ error, b, n ] = SmithGSS( texture, U, mu, s, theta)
         end
         
         % Loop until convergence
-        v0 = n;%spherical2azimuthal(n, mu);
+        v0 = n; %spherical2azimuthal(n, mu);
 
         % vector of best-fit parameters
         b = U' * (v0 - mu);
         % transformed coordinates
         vprime = (U * b) + mu;
+
+        nprime = vprime; %azimuthal2spherical(vprime, mu);
         
         % Normalize
-        vprime = reshape2colvector(vprime);
-        vprime = reshape(bsxfun(@rdivide, vprime, colnorm(vprime)), [], 1);
-
-        %nprime = azimuthal2spherical(vprime, mu);
-        npp = OnConeRotation(theta, vprime, s);
+        nprime = reshape2colvector(nprime);
+        nprime = reshape(bsxfun(@rdivide, nprime, colnorm(nprime)), [], 1); 
+        
+        npp = OnConeRotation(theta, nprime, s);
         i = i + 1;
     end
     
@@ -152,5 +155,9 @@ function nestimates = EstimateNormalsAvg(mu, theta)
     nestimates(:,:,2) = sin(theta) .* sinphi;
     nestimates(:,:,3) = cos(theta);
 
+    % normalize and reshape to column
     nestimates = Image2ColVector3(nestimates(:,:,1), nestimates(:,:,2), nestimates(:,:,3));
+    nestimates = reshape2colvector(nestimates);
+    nestimates = bsxfun(@rdivide, nestimates, colnorm(nestimates));
+    nestimates = reshape(nestimates, [], 1);
 end
