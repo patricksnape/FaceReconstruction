@@ -41,13 +41,16 @@ for i = 1:N
     recipc = rdivide(ones(1, numel(c)), c);
     
     % thetas = asin[cos(c) * sin(thetaav) - (1/c) * yk * sin(c) * % cos(thetav)]
-    angles(1, :) = real(asin(cos(c) .* sin(thetaav) + recipc .* ys .* sin(c) .* cos(thetaav)));
+    s = cos(c) .* sin(thetaav) + recipc .* ys .* sin(c) .* cos(thetaav);
+    s((s - 0.01) > 0.99) = 1.00;
+    
+    angles(1, :) = asin(s);
     el = angles(1, :);
     el(el < 0 ) = el(el<0) + pi;
     angles(1, :) = el;
     % phis = phiav + atan(psi)
     [numer, denom] = psi(c, thetaav, xs, ys);
-    angles(2, :) = phiav + atan2(numer, denom);
+    angles(2, :) = phiav + atan2(numer, denom + 10^-6);
     
     % convert angles to coordinates
     vectors = zeros(size(angles, 1) * (3/2), size(angles, 2));
