@@ -25,8 +25,10 @@ while (sum(abs(c - cold)) + sum(abs(a - aold))) > 1
     sum(abs(c - cold)) + sum(abs(a - aold))
     
     aold = a;
-    a = inv(Mtx) * Ktx;
+    % matlab says this is faster than inv(Mtx) * Ktx;
+    a = Mtx\Ktx;
 
+    % calculate normal weights
     rho = Ut * a;
     Rnx = calcRx(rho, nl);
     Mnx = Rnx * Rnx';
@@ -34,8 +36,9 @@ while (sum(abs(c - cold)) + sum(abs(a - aold))) > 1
     Knx = sum(Knx, 2);
 
     cold = c;
-    c = inv(Mnx) * Knx;
+    c = Mnx\Knx;
     
+    % calculate texture weights
     w = nl * c;
     Rtx = calcRx(w, Ut);
     Mtx = Rtx * Rtx';
