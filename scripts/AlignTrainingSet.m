@@ -3,7 +3,7 @@
 for i=1:199
     shape = I_model{i}.shape;
     normbuffer = I_model{i}.normBuffer;
-    texture = rgb2gray(I_model{i}.frameBuffer);
+    texture = rgb2gray(I_model{i}.textureBuffer);
 
     alignedNormals = AlignFace(normbuffer, ...
                                    shape(1,2), ... % Nose Y
