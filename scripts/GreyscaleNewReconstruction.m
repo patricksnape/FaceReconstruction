@@ -1,6 +1,6 @@
 load('data/trainingset')
 load('data/lights')
-light = lights(1,:) / colnorm(lights(1,:)');
+light = lights(:,1) / colnorm(lights(:,1));
 AlignTrainingSet
 AlignMut1
 GeneratePCAOnTrainingSet
