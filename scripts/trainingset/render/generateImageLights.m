@@ -1,6 +1,6 @@
-function [I_model] = generateData(model, fp, rhoArray, iotaArray, alphaArray, betaArray, resolution, projectionType)
+function [I_model] = generateImageLights(model, resolution, rhoArray, iotaArray, alphaArray, betaArray, projectionType)
     
-    %   generateData Summary of this function goes here
+    %   GENERATEPERSPECTIVEIMAGE Summary of this function goes here
     %   Detailed explanation goes here
 
      %% Shape generation
@@ -28,14 +28,11 @@ function [I_model] = generateData(model, fp, rhoArray, iotaArray, alphaArray, be
     
     %% Normals computation
     
-    % Compute the normals at the vertices
-    [N, triangleArrayNormals] = compute_normal(S(1:3,:), model.triangleArray);
-    
-    N = -N;
-    triangleArrayNormals = -triangleArrayNormals;
-    
-    N(4,:) = 0;
-    triangleArrayNormals(4,:) = 0;
+    % Compute the normals at the center of the triangles
+    [triangleArrayNormals] = computeTriangleNormals(S, model.triangleArray);
+
+    % Compute normals at the shape vertices
+    [N] = computeVertexNormals(S, model.triangleArray, triangleArrayNormals);
     
     
     %% Image rendering
@@ -50,18 +47,13 @@ function [I_model] = generateData(model, fp, rhoArray, iotaArray, alphaArray, be
     % Warp the shape, triangle normals and shape normals using the 
     % view matrix and the total rotation matrix
     [W, triangleArrayNormals, N] = warp(S, triangleArrayNormals, N, viewMatrix, R_total);
-    
+
     % Discard all those triangles whose normals are not facing the
     % camera
     [triangleArray, triangleArrayNormals] = cull(model.triangleArray, triangleArrayNormals);
-    %triangleArray = model.triangleArray;
 
     % Project the warped shape onto the image plane
     [P] = project(W, projectionMatrix, projectionType);
-    
-    % Discard all those triangles with at least one vertex outside of
-    % the viewing volume
-    [triangleArray, ~] = clip(P, triangleArray, triangleArrayNormals);
     
     % Discard all those triangles with at least one vertex outside of
     % the viewing volume
@@ -75,27 +67,16 @@ function [I_model] = generateData(model, fp, rhoArray, iotaArray, alphaArray, be
     % model
     [reflectionVector, viewVector] = computeIlluminationVectors(W, N, lightVector);
 
-    % Rasterize Texture
-    [textureBuffer] = rasterize_lights(model.triangleArray, P, T, colorMatrix, L_amb,  L_dir, lightVector, viewVector, reflectionVector, N, ks, v, resolution);
+    % Rasterize
+    [img] = rasterize_lights(model.triangleArray, P, T, colorMatrix, L_amb,  L_dir, lightVector, viewVector, reflectionVector, N, ks, v, resolution);
     
-    % Rasterize Image
-    [normalBuffer, ~] = rasterize(triangleArray, P, N, resolution);
-    
-    % Rasterize Image
-    [~, W2, ~] = warp(S, S, S, viewMatrix, R_total);
-    [xyzBuffer, ~] = rasterize(triangleArray, P, W2 - repmat([0 0 min(S(3,:)) 0]', 1, size(S,2)), resolution);
-    
-    % Project the shape
-    [xy] = compute_anchor_points_projection(P(:,fp), resolution);
-    xy = xy(1:2,:);
-
     
     %% Save Image 
     
-    I_model.textureBuffer= uint8(textureBuffer);
-    I_model.normBuffer = normalBuffer;
-    I_model.xyzBuffer = xyzBuffer;
-    I_model.shape = xy';
+    I_model.img = uint8(img);
+    I_model.rhoArray = rhoArray;
+    I_model.alphaArray = alphaArray;
+    I_model.betaArray = betaArray;
     
 
 end

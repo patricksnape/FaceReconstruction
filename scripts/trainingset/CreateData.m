@@ -23,6 +23,28 @@ rhoArray(5)  = 0.0;      % tw_x
 rhoArray(6)  = 0.0;      % tw_y
 rhoArray(7)  = 0.0;      % tw_z
 
+%% Define light parameters
+
+iotaArray = zeros(17, 1);
+
+iotaArray(1)  = 1;       % g_r - color correction?
+iotaArray(2)  = 1;       % g_g - color correction?
+iotaArray(3)  = 1;       % g_b - color correction?
+iotaArray(4)  = 1;       % c - color correction?
+iotaArray(5)  = 0;       % o_r - color offset?
+iotaArray(6)  = 0;       % o_g - color offset?
+iotaArray(7)  = 0;       % o_b - color offset?
+iotaArray(8)  = 0.5;     % Ambient Light Red Channel
+iotaArray(9)  = 0.5;     % Ambient Light Green Channel
+iotaArray(10)  = 0.5;    % Ambient Light Blue Channel
+iotaArray(11)  = 0.5;    % Directed Light Red Channel
+iotaArray(12)  = 0.5;    % Directed Light Green Channel
+iotaArray(13)  = 0.5;    % Directed Light Blue Channel
+iotaArray(14)  = 0.0;    % theta - Azimuth
+iotaArray(15)  = 0.0;    % phi - Elevation
+iotaArray(16)  = 30;    % Ks - specular?
+iotaArray(17)  = 40;   % v - specular?
+
 
 %% Define Shape Parameters
 
@@ -78,19 +100,10 @@ if rank(alphaArray) == 199
 
     for i = 1:199
     
-      I_model{i} = generateData(model, fp, rhoArray, alphaArray(:,i), betaArray(:,i), resolution, projectionType);
+      I_model{i} = generateData(model, fp, rhoArray, iotaArray, alphaArray(:,i), betaArray(:,i), resolution, projectionType);
 
       % Define path
       synthetic_path = [data_path '/images/trainingset'];
-
-      % Resize image
-      frame_buffer = imresize(I_model{i}.frameBuffer, [256 256], 'bicubic');
-      xyz_buffer = imresize(I_model{i}.xyzBuffer, [256 256], 'bicubic');
-      norm_buffer = imresize(I_model{i}.normBuffer, [256 256], 'bicubic');
-      
-%       frame_buffer = I_model.frameBuffer;
-%       xyz_buffer = I_model.xyzBuffer;
-%       norm_buffer = I_model.normBuffer;
 
       % Save buffers
       %imwrite(frame_buffer, [synthetic_path '/00' int2str(i) 'f.png'] , 'png');
@@ -101,15 +114,15 @@ if rank(alphaArray) == 199
 
         figure(1);
         subplot(1,3,1)
-        imshow(frame_buffer);
+        imshow(I_model{i}.textureBuffer);
         drawnow;
         
         subplot(1,3,2)
-        imshow(-xyz_buffer(:,:,3),[]);
+        imshow(-I_model{i}.xyzBuffer(:,:,3),[]);
         drawnow;
 
         subplot(1,3,3)
-        imshow(norm_buffer,[]);
+        imshow(I_model{i}.normBuffer,[]);
         drawnow;
         
       end
