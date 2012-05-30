@@ -7,6 +7,6 @@ Xn = cell2mat(Xn');
 XNavg = sum(Xn, 2);
 XNavg = XNavg/size(Xn, 2);
 
-Xn = spherical2azimuthal(Xn, XNavg);
-Naeppcaerror = pca_error(Xn, XNavg);
-UAEPn = myGPCA(Xn, 199, 0);
+XAEPn = spherical2azimuthal(Xn, XNavg);
+Naeppcaerror = pca_error(XAEPn, zeros(size(XAEPn, 1), 1));
+UAEPn = myGPCA(XAEPn, 199, 0);
