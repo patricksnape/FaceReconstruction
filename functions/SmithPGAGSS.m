@@ -25,7 +25,7 @@ function [ b n ] = SmithPGAGSS(texture, U, normal_avg, mus, s)
     n = EstimateNormalsAvg(normal_avg, theta);
     npp = zeros(size(n));
 
-    for i = 1:20       
+    for i = 1:3      
         if i > 1;
             n = npp;
         end

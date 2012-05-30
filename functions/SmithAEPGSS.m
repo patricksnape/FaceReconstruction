@@ -1,4 +1,4 @@
-function [ error, b, n ] = SmithAEPGSS( texture, U, mu, s, theta)
+function [ b n ] = SmithAEPGSS( texture, U, mu, s, theta)
 %SMITHGSS Summary of this function goes here
 % 1. Calculate an initial estimate of the field of surface normals n using (12).
 % 2. Each normal in the estimated field n undergoes an
@@ -29,12 +29,8 @@ function [ error, b, n ] = SmithAEPGSS( texture, U, mu, s, theta)
     
     n = EstimateNormalsAvg(mu, theta);
     npp = zeros(size(n));
-    i = 1;
 
-    while sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp))))) > 300
-        error(i) = sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp)))));
-        sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp)))))
-        
+    for i=1:3      
         if i > 1;
             n = npp;
         end
@@ -54,7 +50,6 @@ function [ error, b, n ] = SmithAEPGSS( texture, U, mu, s, theta)
         nprime = reshape(bsxfun(@rdivide, nprime, colnorm(nprime)), [], 1); 
         
         npp = OnConeRotation(theta, nprime, s);
-        i = i + 1;
     end
     
     n = ColVectorToImage3(npp, size(texture, 1), size(texture, 2));
