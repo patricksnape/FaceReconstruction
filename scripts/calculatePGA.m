@@ -1,8 +1,13 @@
-%% Assumes generateTrainingSet has been run. Calculates all spherical medians.
+%% Assumes CreateData has been run. Calculates all spherical medians.
 
 % Allows me to use a subset of the training_set
-normals_set = training_set.normals;
-mean_normals_set = mean_surface_norm(normals_set);
+normals_set = cellfun(@(x) getfield(x, 'alignedNormals'), I_model, 'UniformOutput', false);
+normals_set = cellfun(@(x) Image2ColVector3(x), normals_set, 'UniformOutput', false);
+normals_set = cell2mat(normals_set');
+%normals_set = normals_set(:, 1:3);
+
+mean_normals_set = sum(normals_set, 2);
+mean_normals_set = mean_normals_set/size(normals_set, 2);
 
 % need to calculate for every point (53490) but we have a single column so
 % need to run over all 160470 in 3s
@@ -74,4 +79,6 @@ clear vk;
 clear i;
 clear k;
 
-save('pga.mat');
+UPGA = myGPCA(D, 199, 0);
+
+save('pga.mat', D, DAvg, UPGA, mus);
