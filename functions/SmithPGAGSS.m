@@ -58,7 +58,7 @@ function [ b n ] = SmithPGAGSS(texture, U, normal_avg, mus, s)
         i
     end
     
-    n = ColVectorToImage3(npp, size(texture, 1), size(texture, 2));
+    n = real(ColVectorToImage3(npp, size(texture, 1), size(texture, 2)));
 end
 
 function n = OnConeRotation(theta, nprime, s)
