@@ -30,6 +30,7 @@ while (sum(abs(c - cold)) + sum(abs(a - aold))) > 1
 
     % calculate normal weights
     rho = Ut * a;
+    % Rnx = nl .* rho (where nl = n . l or q)
     Rnx = calcRx(rho, nl);
     Mnx = Rnx * Rnx';
     Knx = Rnx .* texvec;
@@ -40,6 +41,7 @@ while (sum(abs(c - cold)) + sum(abs(a - aold))) > 1
     
     % calculate texture weights
     w = nl * c;
+    % Rnx = w .* b (bx)
     Rtx = calcRx(w, Ut);
     Mtx = Rtx * Rtx';
     Ktx = Rtx .* texvec;
