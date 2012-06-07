@@ -1,11 +1,13 @@
-function [ a, c ] = NewReconstruction(texture, Un, Ut, l)
+function [ a, c ] = NewReconstruction(texture, Un, Ut, TAvg, XnAvg, l)
 %NEWRECONSTRUCTION Summary of this function goes here
 %   Detailed explanation goes here
 
 P = size(Un, 2);
 [M N] = size(texture);
 
-texture = Image2ColVector(texture);
+texture = Image2ColVector(texture) ;
+tmp = texture - TAvg;
+texvec1 = repmat(tmp, 1, P)';
 texvec = repmat(texture, 1, P)';
 a = rand(P, 1);
 c = rand(P, 1);
@@ -18,33 +20,36 @@ q(q < 0) = 0;
 w = q * c;
 Rtx = calcRx(w, Ut);
 Mtx = Rtx * Rtx';
-Ktx = Rtx .* texvec;
+Ktx = Rtx .* texvec1;
 Ktx = sum(Ktx, 2);
 
-while (sum(abs(c - cold)) + sum(abs(a - aold))) > 1
-    sum(abs(c - cold)) + sum(abs(a - aold))
+meannl = calcNormaldotLight(XnAvg, l, M, N);
+
+
+for i=1:20
+    %sum(abs(c - cold)) + sum(abs(a - aold))
     
-    aold = a;
     % matlab says this is faster than inv(Mtx) * Ktx;
     a = Mtx\Ktx;
 
     % calculate normal weights
-    rho = Ut * a;
+    rho = (Ut * a) + TAvg;
     % Rnx = nl .* rho (where nl = n . l or q)
     Rnx = calcRx(rho, q);
     Mnx = Rnx * Rnx';
-    Knx = Rnx .* texvec;
+    
+    reconMeanFace = repmat((rho .* meannl), 1, P)';
+    
+    Knx = Rnx .* (texvec - reconMeanFace);
     Knx = sum(Knx, 2);
 
-    cold = c;
     c = Mnx\Knx;
-    
-    % calculate texture weights
-    w = q * c;
+
+    w = (q * c) + meannl;
     % Rnx = w .* b (bx)
     Rtx = calcRx(w, Ut);
     Mtx = Rtx * Rtx';
-    Ktx = Rtx .* texvec;
+    Ktx = Rtx .* texvec1;
     Ktx = sum(Ktx, 2);
 end
 
