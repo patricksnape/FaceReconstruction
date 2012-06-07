@@ -28,11 +28,14 @@ function [I_model] = generateImageLightsAndShadows(model, resolution, rhoArray, 
     
     %% Normals computation
     
-    % Compute the normals at the center of the triangles
-    [triangleArrayNormals] = computeTriangleNormals(S, model.triangleArray);
-
-    % Compute normals at the shape vertices
-    [N] = computeVertexNormals(S, model.triangleArray, triangleArrayNormals);
+    % Compute the normals at the vertices
+    [N, triangleArrayNormals] = compute_normal(S(1:3,:), model.triangleArray);
+    
+    N = -N;
+    triangleArrayNormals = -triangleArrayNormals;
+    
+    N(4,:) = 0;
+    triangleArrayNormals(4,:) = 0;
     
     
     %% Shadow buffer computation
