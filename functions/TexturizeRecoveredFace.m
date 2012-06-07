@@ -38,6 +38,7 @@ function TexturizeRecoveredFace(texture, normals, albedo)
                  Ny(1:totalLength); ...
                  Nz(1:totalLength) ];
 
+    %options = [];
     %options.normal = normals';
     options.face_vertex_color = color_mean';
 

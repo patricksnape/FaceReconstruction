@@ -1,4 +1,4 @@
-function [I_model] = generateImageLightsAndShadows(model, resolution, rhoArray, iotaArray, alphaArray, betaArray, projectionType)
+function [I_model] = generateImageLightsAndShadows(model, resolution, rhoArray, iotaArray, alphaArray, betaArray, projectionType, fp)
     
     %   GENERATEPERSPECTIVEIMAGE Summary of this function goes here
     %   Detailed explanation goes here
@@ -156,15 +156,21 @@ function [I_model] = generateImageLightsAndShadows(model, resolution, rhoArray, 
 
     % Rasterize
     [img] = rasterize_lights_shadows(triangleArray, P, T, colorMatrix, L_amb,  L_dir, lightVector, viewVector, reflectionVector, N, ks, v, shadowBuffer, lightP(:,:,5), resolution, sb_resolution, projectionType);
+    [normalBuffer, ~] = rasterize(triangleArray, P, N, resolution);
     
+    % Project the shape
+    [xy] = compute_anchor_points_projection(P(:,fp), resolution);
+    xy = xy(1:2,:);
     
     %% Save Image 
     
-    I_model.img = uint8(img);
-    I_model.resolution = resolution;
-    I_model.rhoArray = rhoArray;
-    I_model.alphaArray = alphaArray;
-    I_model.betaArray = betaArray;
+    I_model.textureBuffer = uint8(img);
+    I_model.shape = xy';
+    %I_model.resolution = resolution;
+    %I_model.rhoArray = rhoArray;
+    I_model.normBuffer = normalBuffer;
+    %I_model.alphaArray = alphaArray;
+    %I_model.betaArray = betaArray;
 
 end
 

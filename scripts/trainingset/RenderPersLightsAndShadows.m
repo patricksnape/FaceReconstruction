@@ -76,10 +76,10 @@ projectionType = 1; % perspective projection
 
 %% Generate image
 
-[I_input] = generateImageLightsAndShadows(model, resolution, rhoArray, iotaArray, alphaArray, betaArray, projectionType);
+[I_input] = generateImageLightsAndShadows(model, resolution, rhoArray, iotaArray, alphaArray, betaArray, projectionType, fp);
 
 
 %% Show image
 
 figure();
-imshow(I_input.img);
+imshow(I_input.textureBuffer);
