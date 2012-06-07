@@ -12,10 +12,10 @@ c = rand(P, 1);
 cold = rand(P, 1);
 aold = rand(P, 1);
 
-nl = calcnl(Un, l, M, N);
-nl(nl < 0) = 0;
+q = calcNormaldotLight(Un, l, M, N);
+q(q < 0) = 0;
 
-w = nl * c;
+w = q * c;
 Rtx = calcRx(w, Ut);
 Mtx = Rtx * Rtx';
 Ktx = Rtx .* texvec;
@@ -31,7 +31,7 @@ while (sum(abs(c - cold)) + sum(abs(a - aold))) > 1
     % calculate normal weights
     rho = Ut * a;
     % Rnx = nl .* rho (where nl = n . l or q)
-    Rnx = calcRx(rho, nl);
+    Rnx = calcRx(rho, q);
     Mnx = Rnx * Rnx';
     Knx = Rnx .* texvec;
     Knx = sum(Knx, 2);
@@ -40,7 +40,7 @@ while (sum(abs(c - cold)) + sum(abs(a - aold))) > 1
     c = Mnx\Knx;
     
     % calculate texture weights
-    w = nl * c;
+    w = q * c;
     % Rnx = w .* b (bx)
     Rtx = calcRx(w, Ut);
     Mtx = Rtx * Rtx';
@@ -50,7 +50,7 @@ end
 
 end
 
-function nl = calcnl(nu, l, m, n)
+function nl = calcNormaldotLight(nu, l, m, n)
     P = size(nu, 2);   
     F = size(nu, 1) / 3;
     
