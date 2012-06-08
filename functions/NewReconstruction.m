@@ -17,15 +17,14 @@ aold = rand(P, 1);
 q = calcNormaldotLight(Un, s, M, N);
 q(q < 0) = 0;
 
-w = q * c;
+meanq = calcNormaldotLight(XnAvg, s, M, N);
+meanq(meanq < 0) = 0;
+
+w = (q * c) + meanq;
 Rtx = calcRx(w, Ut);
 Mtx = Rtx * Rtx';
 Ktx = Rtx .* texvec1;
 Ktx = sum(Ktx, 2);
-
-meanq = calcNormaldotLight(XnAvg, s, M, N);
-meanq(meanq < 0) = 0;
-
 
 for i=1:20
     %sum(abs(c - cold)) + sum(abs(a - aold))
@@ -39,9 +38,9 @@ for i=1:20
     Rnx = calcRx(rho, q);
     Mnx = Rnx * Rnx';
     
-    reconMeanFace = repmat((rho .* meanq), 1, P)';
+    reconMeanFace = repmat(texture - (rho .* meanq), 1, P)';
     
-    Knx = Rnx .* (texvec - reconMeanFace);
+    Knx = Rnx .* reconMeanFace;
     Knx = sum(Knx, 2);
 
     c = Mnx\Knx;
