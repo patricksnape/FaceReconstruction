@@ -35,7 +35,7 @@ for i=1:20
     a = Mtx\(Ktx - Htx);
 
     % calculate normal weights
-    rho = Ut * a;
+    rho = (Ut * a) + TAvg;
 
     Rnx = calcRx(rho, q);
     Mnx = Rnx * Rnx'; 
@@ -48,7 +48,7 @@ for i=1:20
 
     c = Mnx\(Knx - Hnx);
 
-    w = q * c;
+    w = (q * c) + meanq;
 
     Rtx = calcRx(w, Ut);
     Mtx = Rtx * Rtx';
