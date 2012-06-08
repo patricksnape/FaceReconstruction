@@ -6,8 +6,6 @@ P = size(Un, 2);
 [M N] = size(texture);
 
 texture = Image2ColVector(texture) ;
-tmp = texture - TAvg;
-texvec1 = repmat(tmp, 1, P)';
 texvec = repmat(texture, 1, P)';
 a = rand(P, 1);
 c = rand(P, 1);
@@ -20,38 +18,46 @@ q(q < 0) = 0;
 w = q * c;
 Rtx = calcRx(w, Ut);
 Mtx = Rtx * Rtx';
-Ktx = Rtx .* texvec1;
+Ktx = Rtx .* texvec;
 Ktx = sum(Ktx, 2);
+
+Htx = calcRx(w.^2, Ut);
+Htx = calcRx(TAvg, Htx');
+Htx = sum(Htx, 2);
 
 meanq = calcNormaldotLight(XnAvg, s, M, N);
 meanq(meanq < 0) = 0;
-
 
 for i=1:20
     %sum(abs(c - cold)) + sum(abs(a - aold))
     
     % matlab says this is faster than inv(Mtx) * Ktx;
-    a = Mtx\Ktx;
+    a = Mtx\(Ktx - Htx);
 
     % calculate normal weights
-    rho = (Ut * a) + TAvg;
+    rho = Ut * a;
 
     Rnx = calcRx(rho, q);
-    Mnx = Rnx * Rnx';
-    
-    reconMeanFace = repmat((rho .* meanq), 1, P)';
-    
-    Knx = Rnx .* (texvec - reconMeanFace);
+    Mnx = Rnx * Rnx'; 
+    Knx = Rnx .* texvec;
     Knx = sum(Knx, 2);
+    
+    Hnx = calcRx(rho.^2, q);
+    Hnx = calcRx(meanq, Hnx');
+    Hnx = sum(Hnx, 2);
 
-    c = Mnx\Knx;
+    c = Mnx\(Knx - Hnx);
 
-    w = (q * c) + meanq;
+    w = q * c;
 
     Rtx = calcRx(w, Ut);
     Mtx = Rtx * Rtx';
-    Ktx = Rtx .* texvec1;
+    Ktx = Rtx .* texvec;
     Ktx = sum(Ktx, 2);
+    
+    Htx = calcRx(w.^2, Ut);
+    Htx = calcRx(TAvg, Htx');
+    Htx = sum(Htx, 2);
 end
 
 end

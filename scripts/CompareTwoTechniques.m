@@ -1,11 +1,11 @@
-load('data/trainingset')
+% load('data/trainingset')
 % % load('data/pga');
 % load('data/lights');
 % light = lights(:,1) / colnorm(lights(:,1));
 light = [0;0;1];
 texture = I_model{1}.alignedTexture;
-GeneratePCAOnTrainingSet
-% % GenerateAEPPCAOnTrainingSet
+% GeneratePCAOnTrainingSet
+% GenerateAEPPCAOnTrainingSet
 % 
 % figure(1);
 % clf;
@@ -22,6 +22,8 @@ clf;
 [ a c ] = NewReconstruction(texture,Un, Ut, XTavg, XNavg, light);
 [nestimate testimate] = ReconstructFromWeights(XNavg, XTavg, Un, Ut, c, a);
 TexturizeRecoveredFace(texture, nestimate);
+figure;
+imshow(testimate)
 
 % figure(4);
 % clf;
