@@ -1,4 +1,4 @@
-function [ a, c ] = NewReconstruction(texture, Un, Ut, TAvg, XnAvg, l)
+function [ a, c ] = NewReconstruction(texture, Un, Ut, TAvg, XnAvg, s)
 %NEWRECONSTRUCTION Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -14,7 +14,7 @@ c = rand(P, 1);
 cold = rand(P, 1);
 aold = rand(P, 1);
 
-q = calcNormaldotLight(Un, l, M, N);
+q = calcNormaldotLight(Un, s, M, N);
 q(q < 0) = 0;
 
 w = q * c;
@@ -23,7 +23,8 @@ Mtx = Rtx * Rtx';
 Ktx = Rtx .* texvec1;
 Ktx = sum(Ktx, 2);
 
-meannl = calcNormaldotLight(XnAvg, l, M, N);
+meanq = calcNormaldotLight(XnAvg, s, M, N);
+meanq(meanq < 0) = 0;
 
 
 for i=1:20
@@ -34,19 +35,19 @@ for i=1:20
 
     % calculate normal weights
     rho = (Ut * a) + TAvg;
-    % Rnx = nl .* rho (where nl = n . l or q)
+
     Rnx = calcRx(rho, q);
     Mnx = Rnx * Rnx';
     
-    reconMeanFace = repmat((rho .* meannl), 1, P)';
+    reconMeanFace = repmat((rho .* meanq), 1, P)';
     
     Knx = Rnx .* (texvec - reconMeanFace);
     Knx = sum(Knx, 2);
 
     c = Mnx\Knx;
 
-    w = (q * c) + meannl;
-    % Rnx = w .* b (bx)
+    w = (q * c) + meanq;
+
     Rtx = calcRx(w, Ut);
     Mtx = Rtx * Rtx';
     Ktx = Rtx .* texvec1;
@@ -55,19 +56,19 @@ end
 
 end
 
-function nl = calcNormaldotLight(nu, l, m, n)
-    P = size(nu, 2);   
-    F = size(nu, 1) / 3;
+function q = calcNormaldotLight(ntilde, s, m, n)
+    P = size(ntilde, 2);   
+    F = size(ntilde, 1) / 3;
     
-    l1(:,:,1) = repmat(l(1), m, n);
-    l1(:,:,2) = repmat(l(2), m, n);
-    l1(:,:,3) = repmat(l(3), m, n);
-    nl = zeros(F, P);
+    svec(:,:,1) = repmat(s(1), m, n);
+    svec(:,:,2) = repmat(s(2), m, n);
+    svec(:,:,3) = repmat(s(3), m, n);
+    q = zeros(F, P);
     
     for i=1:P
-       np = nu(:, i);
+       np = ntilde(:, i);
        np = ColVectorToImage3(np, m, n);
-       nl(:, i) = Image2ColVector(dot(np, l1, 3))';
+       q(:, i) = Image2ColVector(dot(np, svec, 3))';
     end
 end
 
