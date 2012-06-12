@@ -8,14 +8,9 @@ P = size(Un, 2);
 texture = Image2ColVector(texture) ;
 a = rand(P, 1);
 c = rand(P, 1);
-cold = rand(P, 1);
-aold = rand(P, 1);
 
 q = calcNormaldotLight(Un, s, M, N);
-q(q < 0) = 0;
-
 meanq = calcNormaldotLight(XnAvg, s, M, N);
-meanq(meanq < 0) = 0;
 
 w = (q * c) + meanq;
 Rtx = calcRx(w, Ut);
@@ -24,8 +19,11 @@ texvec = repmat(texture - (w .* TAvg), 1, P)';
 Ktx = Rtx .* texvec;
 Ktx = sum(Ktx, 2);
 
-for i=1:20
-    %sum(abs(c - cold)) + sum(abs(a - aold))
+err = sum((texture - ((Ut * a) + TAvg).*(calcNormaldotLight((Un *c) + XnAvg, s, M, N))).^2);
+prev = err - 1;
+while abs(err - prev) > 0.1
+    abs(err - prev)
+    prev = err;
     
     % matlab says this is faster than inv(Mtx) * Ktx;
     a = Mtx\Ktx;
@@ -42,12 +40,14 @@ for i=1:20
     c = Mnx\Knx;
 
     w = (q * c) + meanq;
-
+    w(w<0) = 0;
     Rtx = calcRx(w, Ut);
     Mtx = Rtx * Rtx';
     texvec = repmat(texture - (w .* TAvg), 1, P)';
     Ktx = Rtx .* texvec;
     Ktx = sum(Ktx, 2);
+    
+    err = sum((texture - ((Ut * a) + TAvg).*(calcNormaldotLight((Un *c) + XnAvg, s, M, N))).^2);
 end
 
 end
