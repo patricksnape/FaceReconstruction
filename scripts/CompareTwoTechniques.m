@@ -39,7 +39,7 @@ textures(:, :, 2) = rgb2gray(mutaligned4);
 [nestimatemulti testimatemulti] = ReconstructFromWeights(XNavg, XTavg, Un, Ut, cmulti, amulti);
 TexturizeRecoveredFace(texture, testimatemulti);
 figure;
-imshow(testimate);
+imshow(testimatemulti);
 
 % figure;
 % clf;
