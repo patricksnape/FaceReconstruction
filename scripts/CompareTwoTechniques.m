@@ -51,7 +51,7 @@ imshow(testimate);
 % clf;
 % TexturizeRecoveredFace(texture, I_model{197}.alignedNormals);
 
-% smithError = AngularError(I_model{197}.alignedNormals, n)
-% AEPError = AngularError(I_model{197}.alignedNormals, naep)
-% PGAError = AngularError(I_model{197}.alignedNormals, npga)
-myError = AngularError(I_model{1}.alignedNormals, nestimate)
+% smithError = AngularError(I_model{197}.alignedNormals, n);
+% AEPError = AngularError(I_model{197}.alignedNormals, naep);
+% PGAError = AngularError(I_model{197}.alignedNormals, npga);
+myError = AngularError(I_model{1}.alignedNormals, nestimate);
