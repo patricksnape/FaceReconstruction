@@ -6,3 +6,8 @@ bln3 = imread('data/images/bln3.ppm');
 blnaligned3 = AlignFace(bln3, 325, 263, 262, 452, 377, 299, 450, 379);
 bln4 = imread('data/images/bln4.ppm');
 blnaligned4 = AlignFace(bln4, 325, 263, 262, 452, 377, 299, 450, 379);
+
+bln(:, :, :, 1) = blnaligned1;
+bln(:, :, :, 2) = blnaligned2;
+bln(:, :, :, 3) = blnaligned3;
+bln(:, :, :, 4) = blnaligned4;

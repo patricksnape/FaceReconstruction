@@ -6,3 +6,8 @@ fav3 = imread('data/images/fav3.ppm');
 favaligned3 = AlignFace(fav3, 356, 296, 299, 505, 396, 310, 467, 390);
 fav4 = imread('data/images/fav4.ppm');
 favaligned4 = AlignFace(fav4, 356, 296, 299, 505, 396, 310, 467, 390);
+
+fav(:, :, :, 1) = favaligned1;
+fav(:, :, :, 2) = favaligned2;
+fav(:, :, :, 3) = favaligned3;
+fav(:, :, :, 4) = favaligned4;

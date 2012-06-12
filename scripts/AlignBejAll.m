@@ -6,3 +6,8 @@ bej3 = imread('data/images/bej3.ppm');
 bejaligned3 = AlignFace(bej3, 347, 291, 289, 496, 352, 261, 438, 351);
 bej4 = imread('data/images/bej4.ppm');
 bejaligned4 = AlignFace(bej4, 347, 291, 289, 496, 352, 261, 438, 351);
+
+bej(:, :, :, 1) = bejaligned1;
+bej(:, :, :, 2) = bejaligned2;
+bej(:, :, :, 3) = bejaligned3;
+bej(:, :, :, 4) = bejaligned4;
