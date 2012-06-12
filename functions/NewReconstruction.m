@@ -14,15 +14,15 @@ aold = rand(P, 1);
 q = calcNormaldotLight(Un, s, M, N);
 q(q < 0) = 0;
 
-w = q * c;
+meanq = calcNormaldotLight(XnAvg, s, M, N);
+meanq(meanq < 0) = 0;
+
+w = (q * c) + meanq;
 Rtx = calcRx(w, Ut);
 Mtx = Rtx * Rtx';
 texvec = repmat(texture - (w .* TAvg), 1, P)';
 Ktx = Rtx .* texvec;
 Ktx = sum(Ktx, 2);
-
-meanq = calcNormaldotLight(XnAvg, s, M, N);
-meanq(meanq < 0) = 0;
 
 for i=1:20
     %sum(abs(c - cold)) + sum(abs(a - aold))
