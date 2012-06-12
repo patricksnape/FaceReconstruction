@@ -12,9 +12,9 @@ function ViewNormals(nimg)
     %nimg = ColVectorToImage3(reshape(C, [], 1), 170, 150);
 
     q = 5;
-    figure(1);
+    figure;
     quiver3(x(1:q:end,1:q:end),y(1:q:end,1:q:end),z(1:q:end,1:q:end),nimg(1:q:end,1:q:end,1), nimg(1:q:end,1:q:end,2),nimg(1:q:end,1:q:end,3));
 
-    figure(2);
+    figure;
     imshow(nimg, []);
 end
