@@ -1,4 +1,4 @@
-function TexturizeRecoveredFace(texture, normals, albedo)
+function TexturizeRecoveredFace(texture, normals)
     Nx = normals(:, :, 1);
     Ny = normals(:, :, 2);
     Nz = normals(:, :, 3);
@@ -28,6 +28,11 @@ function TexturizeRecoveredFace(texture, normals, albedo)
     X_vertex = X_1(1:totalLength);
     Y_vertex = Y_1(1:totalLength);
     Z_vertex = hh_1_T(1:totalLength);
+        
+    medZ = median(Z_vertex);
+    stdZ = std(Z_vertex);
+    Z_vertex(Z_vertex > medZ + 6 * stdZ) = medZ + 6 * stdZ;
+    Z_vertex(Z_vertex < medZ - 6 * stdZ) = medZ - 6 * stdZ;
 
     vertices = [ X_vertex; ...
                  Y_vertex; ...
