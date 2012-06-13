@@ -29,11 +29,11 @@ iotaArray(7)  = 0;       % o_b
 iotaArray(8)  = 0.5;     % L_amb_r
 iotaArray(9)  = 0.5;     % L_amb_g
 iotaArray(10)  = 0.5;    % L_amb_b
-iotaArray(11)  = 0.7;    % L_dir_r
-iotaArray(12)  = 0.7;    % L_dir_g
-iotaArray(13)  = 0.7;    % L_dir_b
-iotaArray(14)  = 30.0;    % theta_l
-iotaArray(15)  = 0.0;    % phi_l
+iotaArray(11)  = 0.8;    % L_dir_r
+iotaArray(12)  = 0.8;    % L_dir_g
+iotaArray(13)  = 0.8;    % L_dir_b
+iotaArray(14)  = 0.0;    % theta_l
+iotaArray(15)  = -30.0;    % phi_l
 iotaArray(16)  = 30;    % Ks
 iotaArray(17)  = 40;   % v
 
@@ -48,7 +48,7 @@ iotaArray(17)  = 40;   % v
 
 % alphaArray(1:199,1) = randn(199, 1);
  
-alphaArray = [randn(199, 1), randn(199, 1), randn(199, 1), rand(199, 1)];
+% alphaArray = [randn(199, 1), randn(199, 1), randn(199, 1), rand(199, 1)];
 
 
 %% Define texture parameters
@@ -61,7 +61,7 @@ alphaArray = [randn(199, 1), randn(199, 1), randn(199, 1), rand(199, 1)];
 
 % betaArray(1:199,1) = randn(199, 1);
 
-betaArray = [randn(199, 1), randn(199, 1), randn(199, 1), rand(199, 1)];
+% betaArray = [randn(199, 1), randn(199, 1), randn(199, 1), rand(199, 1)];
 
 
 %% Define image resolution
@@ -76,10 +76,10 @@ projectionType = 1; % perspective projection
 
 %% Generate image
 
-[I_input] = generateImageLightsAndShadows(model, resolution, rhoArray, iotaArray, alphaArray, betaArray, projectionType, fp);
+[I_light] = generateImageLightsAndShadows(model, resolution, rhoArray, iotaArray, alphaArray, betaArray, projectionType, fp);
 
 
 %% Show image
-
+I_light = AlignMorphableModel(I_light);
 figure();
-imshow(I_input.textureBuffer);
+imshow(I_light.alignedTexture);
