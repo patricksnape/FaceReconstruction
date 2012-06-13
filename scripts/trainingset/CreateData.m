@@ -48,7 +48,7 @@ iotaArray(17)  = 40;   % v - specular?
 
 %% Define Shape Parameters
 
-model_size = 100;
+model_size = 150;
 
 alphas = randn(199, 199);
 
@@ -100,6 +100,7 @@ if rank(alphaArray) == 199
 
     for i = 1:199
     
+      %I_model{i} = generateAmbientData(model, fp, rhoArray, alphaArray(:,i), betaArray(:,i), resolution, projectionType);
       I_model{i} = generateData(model, fp, rhoArray, iotaArray, alphaArray(:,i), betaArray(:,i), resolution, projectionType);
 
       % Define path
