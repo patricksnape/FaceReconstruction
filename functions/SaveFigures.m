@@ -10,6 +10,7 @@ function SaveFigures(subject, tech, n, tex, texrecov)
         'Color',[0 0 0]); % black
 
     TexturizeRecoveredFace(tex, n);
+    saveas(hfig, sprintf('%s/%s/%s-%s.fig', dataPath, subject, tech, subject));
      
     % Chin
     view([128 30])
