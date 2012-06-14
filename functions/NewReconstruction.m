@@ -12,7 +12,10 @@ c = rand(P, 1);
 q = calcNormaldotLight(Un, s, M, N);
 meanq = calcNormaldotLight(XnAvg, s, M, N);
 
-w = (q * c) + meanq;
+n = (Un * c) + XnAvg;
+n = reshape2colvector(n);
+n = reshape(bsxfun(@rdivide, n, colnorm(n)), [], 1);
+w = calcNormaldotLight(n, s, M, N);
 Rtx = calcRx(w, Ut);
 Mtx = Rtx * Rtx';
 texvec = repmat(texture - (w .* TAvg), 1, P)';
@@ -21,7 +24,7 @@ Ktx = sum(Ktx, 2);
 
 err = sum((texture - ((Ut * a) + TAvg).*(calcNormaldotLight((Un *c) + XnAvg, s, M, N))).^2);
 prev = err - 1;
-while abs(err - prev) > 0.1
+while abs(err - prev) > 0.5
     abs(err - prev)
     prev = err;
     
@@ -39,7 +42,11 @@ while abs(err - prev) > 0.1
 
     c = Mnx\Knx;
 
-    w = (q * c) + meanq;
+    n = (Un * c) + XnAvg;
+    n = reshape2colvector(n);
+    n = reshape(bsxfun(@rdivide, n, colnorm(n)), [], 1);
+    w = calcNormaldotLight(n, s, M, N);
+    
     Rtx = calcRx(w, Ut);
     Mtx = Rtx * Rtx';
     texvec = repmat(texture - (w .* TAvg), 1, P)';
