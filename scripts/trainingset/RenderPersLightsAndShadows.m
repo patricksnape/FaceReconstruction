@@ -33,7 +33,7 @@ iotaArray(11)  = 0.8;    % L_dir_r
 iotaArray(12)  = 0.8;    % L_dir_g
 iotaArray(13)  = 0.8;    % L_dir_b
 iotaArray(14)  = 0.0;    % theta_l
-iotaArray(15)  = -30.0;    % phi_l
+iotaArray(15)  = 0.0;    % phi_l
 iotaArray(16)  = 30;    % Ks
 iotaArray(17)  = 40;   % v
 
@@ -50,6 +50,14 @@ iotaArray(17)  = 40;   % v
  
 % alphaArray = [randn(199, 1), randn(199, 1), randn(199, 1), rand(199, 1)];
 
+model_size = 150;
+
+alphas = randn(199, 199);
+
+alphas2 = (alphas .* repmat(sqrt(model.shapeEV'), 199, 1)).^2;
+
+alphaArray = model_size * (alphas2 ./ repmat(sum(abs(alphas2), 1), 199, 1));
+
 
 %% Define texture parameters
     
@@ -61,7 +69,18 @@ iotaArray(17)  = 40;   % v
 
 % betaArray(1:199,1) = randn(199, 1);
 
-% betaArray = [randn(199, 1), randn(199, 1), randn(199, 1), rand(199, 1)];
+% betaArray = 150 * [randn(199, 1), randn(199, 1), randn(199, 1), rand(199, 1)];
+
+betas = randn(199, 199);
+
+betas2 = (betas .* repmat(sqrt(model.shapeEV'), 199, 1)).^2;
+
+betaArray = model_size * (betas2 ./ repmat(sum(abs(betas2), 1), 199, 1));
+
+if (rank(alphaArray) ~= 199 || rank(betaArray) ~= 199)
+    disp('matrix is NOT full rank!');
+    return
+end
 
 
 %% Define image resolution
@@ -76,7 +95,7 @@ projectionType = 1; % perspective projection
 
 %% Generate image
 
-[I_light] = generateImageLightsAndShadows(model, resolution, rhoArray, iotaArray, alphaArray, betaArray, projectionType, fp);
+[I_light] = generateImageLightsAndShadows(model, resolution, rhoArray, iotaArray, alphaArray(:,1), betaArray(:,1), projectionType, fp);
 
 
 %% Show image
