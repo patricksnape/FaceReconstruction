@@ -1,10 +1,15 @@
 RenderPersLightsAndShadows;
 tex = I_light.alignedTexture;
-name = 'litmm-0--30';
-light(1) = sin(deg2rad(iotaArray(14))) * cos(deg2rad(iotaArray(15)));
-light(2) = sin(deg2rad(iotaArray(14))) * sin(deg2rad(iotaArray(15)));
-light(3) = cos(deg2rad(iotaArray(15)));
+name = 'litmm-0--45';
+light(1, 1) = sin(deg2rad(iotaArray(14))) * cos(deg2rad(iotaArray(15)));
+light(2, 1) = sin(deg2rad(iotaArray(14))) * sin(deg2rad(iotaArray(15)));
+light(3, 1) = cos(deg2rad(iotaArray(15)));
 light = light / colnorm(light);
+
+%% Original image
+imshow(tex, 'Border','tight');
+filePath = sprintf('%s/%s/%sfull.png', dataPath, name, name);
+print('-dpng',filePath);
 
 %%
 [error b n] = SmithGSS(tex, Un, XNavg, light');
