@@ -40,7 +40,6 @@ while abs(err - prev) > 0.1
     c = Mnx\Knx;
 
     w = (q * c) + meanq;
-    w(w<0) = 0;
     Rtx = calcRx(w, Ut);
     Mtx = Rtx * Rtx';
     texvec = repmat(texture - (w .* TAvg), 1, P)';
