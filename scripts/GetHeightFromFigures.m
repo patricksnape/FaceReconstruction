@@ -1,4 +1,4 @@
-fnames = dir('data/results/fav/*.fig');
+fnames = dir('data/results/srb/*.fig');
 numfids = length(fnames);
 fnames = nestedSortStruct(fnames, 'name');
 heights = cell(numfids, 1);

@@ -92,10 +92,11 @@ for i=1:length(subjects)
     print('-dpng',filePath);
     
     angerr = zeros(4, 1);
-    angerr(1, 1) = sum(sum(smithError));
-    angerr(2, 1) = sum(sum(AEPError));
+    angerr(1, 1) = sum(sum(AEPError));
+    angerr(2, 1) = sum(sum(novelError));
     angerr(3, 1) = sum(sum(PGAError));
-    angerr(4, 1) = sum(sum(novelError));
+    angerr(4, 1) = sum(sum(smithError));
+
     filePath = sprintf('%s/%s/angularerror.mat', dataPath, subjects{i});
     save(filePath, 'angerr');
 end
