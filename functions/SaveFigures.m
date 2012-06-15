@@ -20,6 +20,14 @@ function SaveFigures(subject, tech, n, tex, texrecov)
     view([0 0])
     filePath = sprintf('%s/%s/%s-%s-profile.png', dataPath, subject, tech, subject);
     print('-dpng',filePath);
+    % Side
+    view([0 0]);
+    camup('manual');
+    camup([0 0 1]);
+    camorbit(90, 90);
+    camorbit(-45, 0, [0 0 1]);
+    filePath = sprintf('%s/%s/%s-%s-side.png', dataPath, subject, tech, subject);
+    print('-dpng',filePath);
 
     imshow(n, 'Border','tight');
     filePath = sprintf('%s/%s/%s-%s-normals.png', dataPath, subject, tech, subject);

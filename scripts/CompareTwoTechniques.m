@@ -76,4 +76,12 @@ for i=1:length(subjects)
     imshow(novelError, 'Border','tight');
     filePath = sprintf('%s/%s/%s-%s-angularerror.png', dataPath, subjects{i}, 'novel', subjects{i});
     print('-dpng',filePath);
+    
+    angerr = zeros(4, 1);
+    angerr(1, 1) = sum(sum(smithError));
+    angerr(2, 1) = sum(sum(AEPError));
+    angerr(3, 1) = sum(sum(PGAError));
+    angerr(4, 1) = sum(sum(novelError));
+    filePath = sprintf('%s/%s/angularerror.mat', dataPath, subjects{i});
+    save(filePath, 'angerr');
 end
