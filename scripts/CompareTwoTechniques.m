@@ -54,8 +54,14 @@ for i=1:length(subjects)
     [nground groundtex] = FourImagePhotometricStereo(eval(subjects{i}));
     SaveFigures(subjects{i}, 'ground', nground, rgb2gray(tex));
     %%
-    figure(2);
+    afig = figure(2);
     dataPath = 'data/results';
+    
+    set(afig,...
+        'InvertHardcopy','off',...
+        'Position',[300 300 170 150],... %[left, bottom, width, height]
+        'PaperPositionMode','auto',...
+        'Color',[0 0 0]); % black
     
     smithError = AngularError(nground, n);
     imshow(smithError, 'Border','tight');
