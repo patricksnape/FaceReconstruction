@@ -1,12 +1,12 @@
 %% Assumes CreateData has been run. Calculates all spherical medians.
 tic;
 % Allows me to use a subset of the training_set
-if (iscell(I_model))
-    normals_set = cellfun(@(x) getfield(x, 'alignedNormals'), I_model, 'UniformOutput', false);
+if (iscell(I_model_corrupt))
+    normals_set = cellfun(@(x) getfield(x, 'alignedNormals'), I_model_corrupt, 'UniformOutput', false);
     normals_set = cellfun(@(x) Image2ColVector3(x), normals_set, 'UniformOutput', false);
     normals_set = cell2mat(normals_set');
 else
-    normals_set = I_model;
+    normals_set = I_model_corrupt;
 end
 %normals_set = normals_set(:, 1:3);
 
@@ -35,7 +35,7 @@ clear i normalp mu options;
 
 %% Calculate D
 % Column vector
-D = zeros(N * 3, K);
+D_corrupt = zeros(N * 3, K);
 
 disp('Generating D');
 % for each face
@@ -46,7 +46,7 @@ for i = 1:K
     parfor k = 1:N
         vk(:, k) = logmap(mus(:, k), normals(:, k));
     end
-    D(:, i) = reshape(vk, [], 1);
+    D_corrupt(:, i) = reshape(vk, [], 1);
 end
 
 clear normals;
@@ -55,17 +55,17 @@ clear vk;
 %% Calculate Average D
 
 disp('Generating DAvg');
-D_avg = zeros(N * 3, 1);
+D_corrupt_avg = zeros(N * 3, 1);
 vk = zeros(3, N);
 
 % for all normals
 parfor k = 1:N   
     vk(:, k) = logmap(mus(:, k), mean_normals_set(:, k));
 end
-D_avg(:, 1) = reshape(vk, [], 1);
+D_corrupt_avg(:, 1) = reshape(vk, [], 1);
 disp('Finished generating DAvg');
 
 clear normals vk i k;
 
-save('pga_F001_disgust.mat', 'D', 'D_avg', 'mus');
+save('pga_corrupt_F001_disgust.mat', 'D_corrupt', 'D_corrupt_avg', 'mus', 'I_model_corrupt');
 toc;
