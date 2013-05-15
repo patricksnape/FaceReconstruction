@@ -5,6 +5,7 @@ function [ model ] = AlignMorphableModel( model )
 shape = model.shape;
 normbuffer = model.normBuffer;
 texture = rgb2gray(model.textureBuffer);
+xyz = model.xyzBuffer;
 
 alignedNormals = AlignFace(normbuffer, ...
                                shape(1,2), ... % Nose Y
@@ -25,6 +26,16 @@ alignedTexture = AlignFace(texture, ...
                                shape(2,1), ... % Left Eye X
                                shape(3,1), ... % Right Eye X
                                shape(4,1));    % Chin X
+                           
+alignedXYZ = AlignFace(xyz, ...
+                               shape(1,2), ... % Nose Y
+                               shape(2,2), ... % Left Eye Y
+                               shape(3,2), ... % Right Eye Y
+                               shape(4,2), ... % Chin Y
+                               shape(1,1), ... % Nose X
+                               shape(2,1), ... % Left Eye X
+                               shape(3,1), ... % Right Eye X
+                               shape(4,1));    % Chin X
 
 ysize = size(alignedNormals, 2);
 xsize = size(alignedNormals, 1);
@@ -34,9 +45,12 @@ cnorm = colnorm(alignedNormals);
 alignedNormals = reshape(bsxfun(@rdivide, alignedNormals, cnorm), [], 1);
 alignedNormals(isnan(alignedNormals)) = 0;
 alignedNormals = ColVectorToImage3(alignedNormals, xsize, ysize);
+% Flip the normals for some reason? Must be projecting down the wrong axis
+alignedNormals(:, :, 1) = -alignedNormals(:, :, 1);
 
 model.alignedNormals = alignedNormals;
 model.alignedTexture = alignedTexture;
+model.alignedXYZ = alignedXYZ;
 
 end
 
