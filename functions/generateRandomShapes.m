@@ -5,7 +5,7 @@ function shapes = generateRandomShapes(model)
 %% Define Shape Parameters
 
 % This number defines how far from the mean face the training set deviates
-model_size = 120;
+model_size = 200;
 
 alphas = randn(199, 199);
 alphaArray = model_size * (alphas ./ repmat(sum(abs(alphas), 1), 199, 1));
