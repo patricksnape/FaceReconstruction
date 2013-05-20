@@ -1,4 +1,4 @@
-function ViewNormals(nimg, surface)
+function ViewNormals(nimg, surface, stride)
     if (ndims(nimg) == 2)
         if (size(nimg, 1) == 3)
             nimg = reshape(nimg, [], 1);
@@ -13,13 +13,14 @@ function ViewNormals(nimg, surface)
     else
         x = surface(:, :, 1);
         y = surface(:, :, 2);
-        z = -surface(:, :, 3);
+        z = surface(:, :, 3);
     end
     
     q = 5;
-    figure(1);
-    quiver3(x(1:q:end,1:q:end),y(1:q:end,1:q:end),z(1:q:end,1:q:end),nimg(1:q:end,1:q:end,1), nimg(1:q:end,1:q:end,2),nimg(1:q:end,1:q:end,3));
+    if nargin == 3
+        q = stride;
+    end
 
-    figure(2);
-    imshow(nimg, []);
+    figure;
+    quiver3(x(1:q:end,1:q:end),y(1:q:end,1:q:end),z(1:q:end,1:q:end),nimg(1:q:end,1:q:end,1), nimg(1:q:end,1:q:end,2),nimg(1:q:end,1:q:end,3));
 end
