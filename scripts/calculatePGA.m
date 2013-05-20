@@ -67,5 +67,5 @@ disp('Finished generating DAvg');
 
 clear normals vk i k;
 
-save('pga_F001_disgust.mat', 'D', 'D_avg', 'mus');
+save('pga_F001_disgust.mat', 'D', 'D_avg', 'mus', 'I_model');
 toc;
