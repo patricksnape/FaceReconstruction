@@ -31,8 +31,10 @@ for p=1:num_trials
         [Un, ~] = normal_pca_from_model(I_model, k, 'LS');
         [Un_corrupt, ~] = normal_pca_from_model(I_model_corrupt, k, 'LS');
         
-        [Un_pga, ~] = normal_pca_from_model(D, k, 'PGA');
-        [Un_pga_corrupt, ~] = normal_pca_from_model(D_corrupt, k, 'PGA');
+        if exist('D', 'var')
+            [Un_pga, ~] = normal_pca_from_model(D, k, 'PGA');
+            [Un_pga_corrupt, ~] = normal_pca_from_model(D_corrupt, k, 'PGA');
+        end
         
         [Un_spher, ~] = normal_pca_from_model(I_model, k, 'SPHER');
         [Un_spher_corrupt, ~] = normal_pca_from_model(I_model_corrupt, k, 'SPHER');
@@ -45,7 +47,9 @@ for p=1:num_trials
                 ele(p, k) = ele(p, k) + (dot(Un_ele(:, i), Un_ele_corrupt(:, j)) ^ 2);
                 ip(p, k) = ip(p, k) + (dot(Un_ip(:, i), Un_ip_corrupt(:, j)) ^ 2);
                 ls(p, k) = ls(p, k) + (dot(Un(:, i), Un_corrupt(:, j)) ^ 2);
-                pga(p, k) = pga(p, k) + (dot(Un_pga(:, i), Un_pga_corrupt(:, j)) ^ 2);
+                if exist('D', 'var')
+                    pga(p, k) = pga(p, k) + (dot(Un_pga(:, i), Un_pga_corrupt(:, j)) ^ 2);
+                end
                 spher(p, k) = spher(p, k) + (dot(Un_spher(:, i), Un_spher_corrupt(:, j)) ^ 2);
             end
         end
