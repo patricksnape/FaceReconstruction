@@ -34,8 +34,8 @@ for p=1:num_trials
         [Un_pga, ~] = normal_pca_from_model(D, k, 'PGA');
         [Un_pga_corrupt, ~] = normal_pca_from_model(D_corrupt, k, 'PGA');
         
-        [Un_spher, ~] = normal_pca_from_model(D, k, 'SPHER');
-        [Un_spher_corrupt, ~] = normal_pca_from_model(D_corrupt, k, 'SPHER');
+        [Un_spher, ~] = normal_pca_from_model(I_model, k, 'SPHER');
+        [Un_spher_corrupt, ~] = normal_pca_from_model(I_model_corrupt, k, 'SPHER');
 
         for i=1:k
             for j=1:k
