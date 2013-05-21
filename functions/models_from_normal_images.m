@@ -13,7 +13,7 @@ for i=1:K
    y = reshape(normal_images(:, :, 2, i), 1, []);
    z = reshape(normal_images(:, :, 3, i), 1, []);
    vs = [x; y; z];
-   I_model(:, i) = reshape(vs, [y_size * x_size * 3, 1]);
+   I_model(:, i) = reshape(vs, [], 1);
 end
 
 %% Corrupt images
@@ -41,6 +41,6 @@ for i=1:sample_count
     y = reshape(normal_images_corrupt(:, :, 2, i), 1, []);
     z = reshape(normal_images_corrupt(:, :, 3, i), 1, []);
     vs = [x; y; z];
-    I_model_corrupt(:, i) = reshape(vs, [y_size * x_size * 3, 1]);
+    I_model_corrupt(:, i) = reshape(vs, [], 1);
 end
 
