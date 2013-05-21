@@ -1,9 +1,19 @@
-function [angular_error] = normal_reconstruction_error(I_model, X, X_corrupted, error_metric)
+function [angular_error] = normal_reconstruction_error(I_model, X, X_corrupted, error_metric, k, varargin)
 %PCA_ERROR Calculates the normalized error of computing the principal
 %components
 
+inp = inputParser;
+
+% Default feature vectors
+inp.addOptional('mus', [], @(x) size(x,1) == 3);
+
+inp.parse(varargin{:});
+opts = inp.Results;
+clear('inp');
+
 % Calculate PCA
-[Un, Un_avg] = normal_pca_from_model(I_model, size(I_model, 2), error_metric);
+% If we are calculating PGA, we assume we have been provided with D
+[Un, Un_avg] = normal_pca_from_model(I_model, k, error_metric);
 
 % Transform in to appropriate space
 switch error_metric
@@ -18,8 +28,14 @@ switch error_metric
         Xn_norm = matsubcolvec(X_corrupted, Un_avg);
         Xn_avg = Un_avg;
     case 'PGA'
-        % TODO: needs to be projected in to tangent space
-        error('Not implemented yet');
+        mus = opts.mus;
+        col = reshape2colvector(X_corrupted);
+        Xn_norm = zeros(size(col));
+        for i=1:size(col, 2)
+            Xn_norm(:, i) = logmap(mus(:, i), col(:, i));
+        end
+        Xn_norm = Xn_norm(:);
+        Xn_avg = zeros(size(Xn_norm, 1), 1);
     case 'AZI'
         [Xn_norm, X_spher] = normals2azimuth(X_corrupted);
         Xn_avg = zeros(size(Xn_norm, 1), 1);
@@ -40,8 +56,12 @@ switch error_metric
     case 'AEP'    
         Xtilde = azimuthal2spherical(Xtilde, Un_avg);
     case 'PGA'
-        % TODO: needs to be projected in to tangent space
-        error('Not implemented yet');
+        col = reshape2colvector(Xtilde);
+        Xtilde = zeros(size(col));
+        for i=1:size(col, 2)
+            Xtilde(:, i) = expmap(mus(:, i), col(:, i));
+        end
+        Xtilde = Xtilde(:);
     case 'AZI'
         X_spher = reshape(X_spher, 4, []);
         X_ele = X_spher(3:4, :);
