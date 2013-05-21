@@ -1,4 +1,4 @@
-function [G, xy, xyz] = normals2spher( normals )
+function [spher] = normals2spher(normals)
 %SPHERICAL_CORR Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -19,8 +19,8 @@ gy  = y ./ xy;
 gz  = z ./ xyz;
 sgz = sqrt(1 - gz .^ 2);
 
-G = [gx; gy; gz; sgz];
-G(isnan(G)) = 0;
+spher = [gx; gy; gz; sgz];
+spher(isnan(spher)) = 0;
 
 end
 
