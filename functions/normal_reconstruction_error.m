@@ -43,11 +43,11 @@ switch error_metric
         % TODO: needs to be projected in to tangent space
         error('Not implemented yet');
     case 'AZI'
-        X_spher = reshape(X_spher, [4 numel(X_spher) / 4]);
+        X_spher = reshape(X_spher, 4, []);
         X_ele = X_spher(3:4, :);
         Xtilde = azimuth2normals(Xtilde, X_ele);
     case 'ELE'
-        X_spher = reshape(X_spher, [4 numel(X_spher) / 4]);
+        X_spher = reshape(X_spher, 4, []);
         X_azi = X_spher(1:2, :);
         Xtilde = ele2normals(Xtilde, X_azi);
     case 'SPHER'

@@ -1,7 +1,7 @@
 % Assumes morphable model is loaded as base_morphable_model
 
 %% NOSE
-shape = reshape(base_morphable_model.shapeMU, [3 numel(base_morphable_model.shapeMU)/3])';
+shape = reshape(base_morphable_model.shapeMU, 3, [])';
 noseInd = find(shape(:, 1) > -24740 & shape(:, 1) < 20003 & shape(:, 2) < 17370 & shape(:, 2) > -12900);
 [row ~] = ind2sub(size(shape), noseInd);
 row = find(ismember(base_morphable_model.tl, row));

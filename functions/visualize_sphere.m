@@ -4,7 +4,7 @@ function visualize_sphere(points, index, count, col)
 
 if ~exist('col', 'var'), col = 'r.'; end
 
-index_object = reshape(points(:, index), [3 numel(points(:, index))/3]);
+index_object = reshape(points(:, index), 3, []);
 
 if ~exist('count', 'var'), count = size(index_object, 2); end
 

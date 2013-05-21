@@ -6,8 +6,8 @@ if (index > size(training_set, 2))
     error('Index is out of range of training set')
 end
 
-shape = reshape(training_set.shapes(:, index), [ 3 numel(training_set.shapes(:, index))/3 ]);
-normals = reshape(training_set.normals(:, index), [ 3 numel(training_set.normals(:, index))/3 ]);
+shape = reshape(training_set.shapes(:, index), 3, []);
+normals = reshape(training_set.normals(:, index), 3, []);
 
 options = [];
 options.normal = normals;

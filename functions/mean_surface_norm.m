@@ -6,9 +6,9 @@ function [ msn ] = mean_surface_norm(normals)
 %   ( x1; y1; z1; x2; ...)
 
 nbar = sum(normals, 2) / size(normals, 2);
-nbar = reshape(nbar, [ 3 numel(nbar)/3 ]);
+nbar = reshape(nbar, 3, []);
 
 mag = colnorm(nbar);
-msn = reshape(bsxfun(@rdivide, nbar, mag), [3 * numel(mag) 1]);
+msn = reshape(bsxfun(@rdivide, nbar, mag), [], 1]);
 
 end

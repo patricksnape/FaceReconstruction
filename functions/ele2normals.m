@@ -3,10 +3,10 @@ function [xyz] = ele2normals(elevation, azimuth)
 %   Detailed explanation goes here
 
 if size(elevation, 1) ~= 2
-    elevation = reshape(elevation, [2 numel(elevation) / 2]);
+    elevation = reshape(elevation, 2, []);
 end
 if size(azimuth, 1) ~= 2
-    azimuth = reshape(azimuth, [2 numel(azimuth) / 2]);
+    azimuth = reshape(azimuth, 2, []);
 end
 
 angles = [azimuth; elevation];

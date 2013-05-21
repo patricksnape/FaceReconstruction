@@ -3,7 +3,7 @@ function [xyz] = spher2normals(angles)
 %   Detailed explanation goes here
 
 if size(angles, 1) ~= 4
-    angles = reshape(angles, [4 numel(angles) / 4]);
+    angles = reshape(angles, 4, []);
 end
 
 gx  = angles(1, :);

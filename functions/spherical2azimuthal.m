@@ -18,7 +18,7 @@ N = size(normals, 2);
 out = zeros(size(normals, 1) * (2/3), size(normals, 2));
 
 % reshape to vector matrix
-vec_mean_normals = reshape(mean_normal, [3 numel(mean_normal)/3]);
+vec_mean_normals = reshape(mean_normal, 3, []);
 vec_mean_normals = bsxfun(@rdivide, vec_mean_normals, colnorm(vec_mean_normals));
 
 thetaav = elevation(vec_mean_normals(3, :));
@@ -28,7 +28,7 @@ phiav = azimuth(vec_mean_normals(1, :), vec_mean_normals(2, :));
 
 for i = 1:N
     % as vector matrix
-    kset = reshape(normals(:, i), [3 numel(normals(:, i))/3]);
+    kset = reshape(normals(:, i), 3, []);
     projected = zeros(2, size(kset, 2));
     
     thetak = elevation(kset(3, :));

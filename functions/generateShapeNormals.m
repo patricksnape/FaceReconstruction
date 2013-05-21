@@ -14,7 +14,7 @@ normals = zeros(size(shapes, 1), N);
 parfor_progress(N);
 
 parfor i = 1:N
-    shape = reshape(shapes(:, i), [ 3 numel(shapes(:, i))/3 ]);
+    shape = reshape(shapes(:, i), 3, []);
     % Assumes toolbox_graph, toolbox_general and toolbox_signal exist in
     % the path:
     % http://www.ceremade.dauphine.fr/~peyre/numerical-tour/tours/meshproc_2_basics_3d/
