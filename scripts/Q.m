@@ -56,6 +56,8 @@ for p=1:num_trials
     end
 end
 
+clear num_trials num_eigs i j k p;
+
 aep_mean = mean(aep, 1);
 azi_mean = mean(azi, 1);
 ele_mean = mean(ele, 1);
