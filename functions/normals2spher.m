@@ -20,6 +20,7 @@ gz  = z ./ xyz;
 sgz = sqrt(1 - gz .^ 2);
 
 spher = reshape([gx; gy; gz; sgz], [], 1);
+spher(isnan(spher)) = 0;
 
 end
 

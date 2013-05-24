@@ -26,6 +26,7 @@ theta = atan((gz ./ sgz));
 [x, y, z] = sph2cart(phi, theta, ones(size(phi)));
 
 xyz = reshape([x; y; z], [], 1);
+xyz(isnan(xyz)) = 0;
 
 end
 
