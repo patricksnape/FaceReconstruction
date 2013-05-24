@@ -1,4 +1,4 @@
-function [ b n ] = SmithPGAGSS(texture, U, normal_avg, mus, s)
+function [ n, b, error ] = SmithPGAGSS(texture, U, normal_avg, s, mus, theta)
 %SMITHGSS Summary of this function goes here
 % 1. Calculate an initial estimate of the field of surface normals n using (12).
 % 2. Each normal in the estimated field n undergoes an
@@ -17,16 +17,21 @@ function [ b n ] = SmithPGAGSS(texture, U, normal_avg, mus, s)
 
 % Texture must be converted to greyscale
 
-    % normalize so it is in the range 0 to 1
-    % intensity can never be < 0
-    theta = abs(acos(((double(texture) / double(max(max(texture)))))));
-    theta(theta < 0) = 0;
+    if (nargin < 6)
+        % normalize so it is in the range 0 to 1
+        % intensity can never be < 0
+        theta = abs(acos(((double(texture) / double(max(max(texture)))))));
+        theta(theta < 0) = 0;
+    end
     
     n = EstimateNormalsAvg(normal_avg, theta);
+    theta = theta(:);
     npp = zeros(size(n));
+    error = zeros(1, 10);
 
-    for i = 1:3      
-        if i > 1;
+    for i = 1:10
+        error(i) = sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp)))));
+        if i > 1
             n = npp;
         end
         
@@ -52,10 +57,17 @@ function [ b n ] = SmithPGAGSS(texture, U, normal_avg, mus, s)
         
         % Normalize
         nprime = reshape2colvector(nprime);
-        nprime = reshape(bsxfun(@rdivide, nprime, colnorm(nprime)), [], 1); 
+        nprime = bsxfun(@rdivide, nprime, colnorm(nprime));
         
-        npp = OnConeRotation(theta, nprime, s);
-        i
+        % Rotate back to on cone normal by projecting on to the tangent
+        % plane defined by the light vector
+        npp = nprime;
+        for p = 1:size(npp, 2)
+            log_s_npp = logmap(s, npp);
+            vec = acos(theta(p)) * (log_s_npp / norm(log_s_npp));
+            npp(:, p) = expmap(s, vec);
+        end
+        npp = reshape(npp, [], 1);
     end
     
     n = real(ColVectorToImage3(npp, size(texture, 1), size(texture, 2)));

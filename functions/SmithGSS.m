@@ -1,4 +1,4 @@
-function [ error, b, n ] = SmithGSS( texture, U, mu, s, theta)
+function [ n, b, error ] = SmithGSS(texture, U, normal_avg, s, theta)
 %SMITHGSS Summary of this function goes here
 % 1. Calculate an initial estimate of the field of surface normals n using (12).
 % 2. Each normal in the estimated field n undergoes an
@@ -20,61 +20,38 @@ function [ error, b, n ] = SmithGSS( texture, U, mu, s, theta)
 
 % Texture must be converted to greyscale
 
-    if (nargin < 6)
+    if (nargin < 5)
         % normalize so it is in the range 0 to 1
         % intensity can never be < 0
         theta = abs(acos(((double(texture) / double(max(max(texture)))))));
         theta(theta < 0) = 0;
     end
     
-    n = EstimateNormalsAvg(mu, theta);
+    n = EstimateNormalsAvg(normal_avg, theta);
     npp = zeros(size(n));
-    i = 1;
+    error = zeros(1, 10);
 
-    while sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp))))) > 1
+    for i=1:10
         error(i) = sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp)))));
-        sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp)))))
         
-        if i > 1;
+        if i > 1
             n = npp;
         end
         
         % Loop until convergence
-        v0 = n; %spherical2azimuthal(n, mu);
+        v0 = n;
 
         % vector of best-fit parameters
-        b = U' * (v0 - mu);
+        b = U' * (v0 - normal_avg);
         % transformed coordinates
-        vprime = (U * b) + mu;
-
-        nprime = vprime; %azimuthal2spherical(vprime, mu);
+        nprime = (U * b) + normal_avg;
         
         % Normalize
         nprime = reshape2colvector(nprime);
         nprime = reshape(bsxfun(@rdivide, nprime, colnorm(nprime)), [], 1); 
         
         npp = OnConeRotation(theta, nprime, s);
-        i = i + 1;
     end
     
     n = ColVectorToImage3(npp, size(texture, 1), size(texture, 2));
-end
-
-function nestimates = EstimateNormals(texture, theta)
-    % n ??
-    [dx, dy] = longRangeGradient(double(texture), 170);
-    
-    % Could have some division by zero...
-    norm = sqrt(dx.^2 + dy.^2);
-    sinphi = dy ./ norm;
-    sinphi(isnan(sinphi)) = 0;
-    cosphi = dx ./ norm;
-    cosphi(isnan(cosphi)) = 0;
-    clear norm;
-    
-    nestimates(:,:,1) = sin(theta) .* cosphi;
-    nestimates(:,:,2) = sin(theta) .* sinphi;
-    nestimates(:,:,3) = cos(theta);
-
-    nestimates = Image2ColVector3(nestimates(:,:,1), nestimates(:,:,2), nestimates(:,:,3));
 end
