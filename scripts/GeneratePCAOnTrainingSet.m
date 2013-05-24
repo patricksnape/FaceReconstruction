@@ -1,6 +1,6 @@
 %% Normals - Assumes I_model exists
 
-[Un, Xn_avg] = normal_pca_from_model(I_model, 5, 'LS');
+[Un_ls, Xn_avg] = normal_pca_from_model(I_model, 10, 'LS');
 
 %% Texture - Assumes I_model exists
 
