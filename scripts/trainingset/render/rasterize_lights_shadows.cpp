@@ -29,7 +29,7 @@ T max (T *a, int num_elements) {
   return max;
 }
 
-static int round(double number) {
+static int round_custom(double number) {
     return (number >= 0) ? (int)(number + 0.5) : (int)(number - 0.5);
 }
 
@@ -268,8 +268,8 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
             shape[1] = alpha * shape0[1] + beta * shape1[1] + gamma * shape2[1];
             shape[2] = alpha * shape0[2] + beta * shape1[2] + gamma * shape2[2];
             
-            m = round((shape[1] + 1) / sb_h_step) - 1;
-            l = round((shape[0] + 1) / sb_w_step) - 1;
+            m = round_custom((shape[1] + 1) / sb_h_step) - 1;
+            l = round_custom((shape[0] + 1) / sb_w_step) - 1;
             
             s = 0;
             
