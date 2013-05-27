@@ -15,7 +15,7 @@ clear('inp');
 
 % Early out if v is 0
 if norm(v) == 0
-    n = v;
+    n = b;
     return
 end
 

@@ -39,4 +39,8 @@ v = b + ((theta .* (vprime - b)) / norm(vprime - b));
 function v = sphere_projection(b, q)
 theta = dot(b, q);
 
-v = (theta / sin(theta)) * (q - b * cos(theta));
+if theta == 0
+   v = b;
+else
+    v = (theta / sin(theta)) * (q - b * cos(theta));
+end
