@@ -21,7 +21,7 @@ function TexturizeRecoveredFace(texture, normals)
     triangles   = delaunay(X_1, Y_1);
     
     % extract the reconstructed height map
-    hh = FrankotChellappa(Nx, Ny, Nz);
+    hh = FrankotChellappa(-Nx, Ny, Nz);
     hh_1_T= (hh(1:(sizeY), 1:(sizeX)))';
 
     % construct mesh vertices
