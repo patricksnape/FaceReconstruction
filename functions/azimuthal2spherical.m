@@ -27,11 +27,18 @@ vec_mean_normals = bsxfun(@rdivide, vec_mean_normals, colnorm(vec_mean_normals))
 thetaav = elevation(vec_mean_normals(3, :));
 % round thetas back in to the range [-pi/2, pi/2]
 thetaav(thetaav > pi/2) = thetaav(thetaav > pi/2) - pi;
+thetaav(thetaav < -pi/2) = thetaav(thetaav < -pi/2) + pi;
 phiav = azimuth(vec_mean_normals(1, :), vec_mean_normals(2, :));
+phiav(phiav > pi) = phiav(phiav > pi) - 2 * pi;
+phiav(phiav < pi) = phiav(phiav < pi) + 2 * pi;
 
 for i = 1:N
     % as vector matrix
     kset = reshape(projections(:, i), 2, []);
+    % find any zero normals as they present a real problem
+    % the column indicies are the same in both sets of data
+    zero_indices = find(sum(abs(kset)) == 0);
+
     xs = kset(1, :);
     ys = kset(2, :);
     % theta,phi
@@ -42,21 +49,26 @@ for i = 1:N
     
     % thetas = asin[cos(c) * sin(thetaav) - (1/c) * yk * sin(c) * % cos(thetav)]
     s = cos(c) .* sin(thetaav) + recipc .* ys .* sin(c) .* cos(thetaav);
-    s((s - 0.01) > 0.99) = 1.00;
     
-    angles(1, :) = asin(s);
-    el = angles(1, :);
-    el(el < 0 ) = el(el<0) + pi;
+    el = asin(s);
+    el(el > pi/2) = el(el > pi/2) - pi;
+    el(el < -pi/2) = el(el < -pi/2) + pi;
     angles(1, :) = el;
     % phis = phiav + atan(psi)
     [numer, denom] = psi(c, thetaav, xs, ys);
-    angles(2, :) = phiav + atan2(numer, denom + 10^-6);
+    azi = phiav + atan2(numer, denom);
+    azi(azi > pi) = azi(azi > pi) - 2 * pi;
+    azi(azi < pi) = azi(azi < pi) + 2 * pi;
+    angles(2, :) = azi;
     
     % convert angles to coordinates
     vectors = zeros(size(angles, 1) * (3/2), size(angles, 2));
     vectors(1, :) = cos(angles(2, :)) .* sin(angles(1, :));
     vectors(2, :) = sin(angles(2, :)) .* sin(angles(1, :));
     vectors(3, :) = cos(angles(1, :));
+
+    % reset zero projections back to zero
+    vectors(:, zero_indices) = 0;
     
     % reshape back to column vector
     out(:, i) = reshape(vectors, [], 1);

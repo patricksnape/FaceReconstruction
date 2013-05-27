@@ -24,17 +24,27 @@ vec_mean_normals = bsxfun(@rdivide, vec_mean_normals, colnorm(vec_mean_normals))
 thetaav = elevation(vec_mean_normals(3, :));
 % round thetas back in to the range [-pi/2, pi/2]
 thetaav(thetaav > pi/2) = thetaav(thetaav > pi/2) - pi;
+thetaav(thetaav < -pi/2) = thetaav(thetaav < -pi/2) + pi;
 phiav = azimuth(vec_mean_normals(1, :), vec_mean_normals(2, :));
+phiav(phiav > pi) = phiav(phiav > pi) - 2 * pi;
+phiav(phiav < pi) = phiav(phiav < pi) + 2 * pi;
 
 for i = 1:N
     % as vector matrix
     kset = reshape(normals(:, i), 3, []);
     projected = zeros(2, size(kset, 2));
+
+    % find any zero normals as they present a real problem
+    % the column indicies are the same in both sets of data
+    zero_indices = find(sum(abs(kset)) == 0);
     
     thetak = elevation(kset(3, :));
     % round thetas back in to the range [-pi/2, pi/2]
     thetak(thetak > pi/2 ) = thetak(thetak > pi/2) - pi;
+    thetak(thetak < -pi/2 ) = thetak(thetak < -pi/2) + pi;
     phik = azimuth(kset(1, :), kset(2, :));
+    phik(phik > pi) = phik(phik > pi) - 2 * pi;
+    phik(phik < pi) = phik(phik < pi) + 2 * pi;
     
     % cos(c) = sin(thetaav) * sin(thetak) + cos(thetaav) * cos(thetak) * cos[phik - phiav]
     cosc = sin(thetaav) .* sin(thetak) + cos(thetaav) .* cos(thetak) .* cos(phik - phiav);
@@ -46,10 +56,15 @@ for i = 1:N
     projected(1, :) = kprime .* cos(thetak) .* sin(phik - phiav);
     % ys = kprime * (cos(thetaav) * sin(phik) - sin(thetaav) * cos(thetak) * cos[phik - phiav]
     projected(2, :) = kprime .* (cos(thetaav) .* sin(thetak) - sin(thetaav) .* cos(thetak) .* cos(phik - phiav));
+
+    % reset the zero normals back to 0
+    projected(:,  zero_indices) = 0;
     
     % reshape back to column vector
     out(:, i) = reshape(projected, [], 1);
 end
+
+
 
 end
 
