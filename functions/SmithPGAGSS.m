@@ -63,7 +63,7 @@ function [ n, b, error ] = SmithPGAGSS(texture, U, normal_avg, s, mus, theta)
         % plane defined by the light vector
         npp = nprime;
         for p = 1:size(npp, 2)
-            log_s_npp = logmap(s, npp);
+            log_s_npp = logmap(s, npp(:, p));
             vec = acos(theta(p)) * (log_s_npp / norm(log_s_npp));
             npp(:, p) = expmap(s, vec);
         end
