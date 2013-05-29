@@ -1,14 +1,14 @@
 if (~exist('I_model', 'var'))
     load('data/trainingset')
 end
-% if (~exist('D', 'var'))
-%     load('data/pga');
-% end
+if (~exist('D', 'var'))
+    load('data/pga_trainingset');
+end
 if (~exist('lights', 'var'))
     load('data/lights');
 end
 close all;
-light = (lights(:,1) / colnorm(lights(:,1)))';
+light = (lights(:,1) / colnorm(lights(:,1)));
 subjects = {'bej', 'bln', 'fav', 'mut', 'pet', 'rob' 'srb'};
 
 AlignAllAlex
@@ -17,32 +17,44 @@ if (~exist('Un_ls', 'var'))
 end
 
 for i=1:length(subjects)
+    display(subjects{i});
     tex = eval(sprintf('%saligned1', subjects{i}));
     %%
-    n_ls = SmithGSS_generic('LS', rgb2gray(tex), Un_ls, Xn_avg, light);
-    SaveFigures(subjects{i}, 'ls', n_ls, rgb2gray(tex));
-    %%
+    display('AEP');
     n_aep = SmithGSS_generic('AEP', rgb2gray(tex), Un_aep, Xn_avg, light);
-    SaveFigures(subjects{i}, 'aep', n_aep, rgb2gray(tex));
     %%
-    n_spher = SmithGSS_generic('SPHER', rgb2gray(tex), Un_spher, Xn_avg, light);
-    SaveFigures(subjects{i}, 'spher', n_spher, rgb2gray(tex));
-    %%
-    n_ip = SmithGSS_generic('IP', rgb2gray(tex), Un_ip, Xn_avg, light);
-    SaveFigures(subjects{i}, 'ip', n_ip, rgb2gray(tex));
-    %%
+    display('AZI');
     n_azi = SmithGSS_generic('AZI', rgb2gray(tex), Un_azi, Xn_avg, light);
-    SaveFigures(subjects{i}, 'azi', n_azi, rgb2gray(tex));
     %%
+    display('ELE');
     n_ele = SmithGSS_generic('ELE', rgb2gray(tex), Un_ele, Xn_avg, light);
-    SaveFigures(subjects{i}, 'ele', n_ele, rgb2gray(tex));
-    %% TODO
-%     n_pga = SmithPGAGSS(rgb2gray(tex), Un_pga, Xn_avg, mus, light);
-%     SaveFigures(subjects{i}, 'pga', n_pga, rgb2gray(tex));
     %%
+    display('IP');
+    n_ip = SmithGSS_generic('IP', rgb2gray(tex), Un_ip, Xn_avg, light);
+    %%
+    display('LS');
+    n_ls = SmithGSS_generic('LS', rgb2gray(tex), Un_ls, Xn_avg, light);
+    %%
+    display('PGA');
+%     n_pga = SmithPGAGSS(rgb2gray(tex), Un_pga, Xn_avg, light, mus);
+    n_pga = SmithGSS_generic('PGA', rgb2gray(tex), Un_pga, Xn_avg, light, 'mus', mus);
+    %%
+    display('SPHER');
+    n_spher = SmithGSS_generic('SPHER', rgb2gray(tex), Un_spher, Xn_avg, light);
+    %%
+    display('GROUND');
     [nground, groundtex] = FourImagePhotometricStereo(eval(subjects{i}));
+    %%
+    SaveFigures(subjects{i}, 'aep', n_aep, rgb2gray(tex));
+    SaveFigures(subjects{i}, 'azi', n_azi, rgb2gray(tex));
+    SaveFigures(subjects{i}, 'ele', n_ele, rgb2gray(tex));
+    SaveFigures(subjects{i}, 'ip', n_ip, rgb2gray(tex));
+    SaveFigures(subjects{i}, 'ls', n_ls, rgb2gray(tex));
+    SaveFigures(subjects{i}, 'pga', n_pga, rgb2gray(tex));
+    SaveFigures(subjects{i}, 'spher', n_spher, rgb2gray(tex));
     SaveFigures(subjects{i}, 'ground', nground, rgb2gray(tex));
     %%
+    display('Calculating Angular Error...');
     afig = figure(2);
     dataPath = 'data/results';
     
@@ -50,7 +62,8 @@ for i=1:length(subjects)
         'InvertHardcopy','off',...
         'Position',[300 300 170 150],... %[left, bottom, width, height]
         'PaperPositionMode','auto',...
-        'Color',[0 0 0]); % black
+        'Color',[0 0 0], ... % black
+        'visible', 'off'); 
     
     angular_error_ls = AngularError(nground, n_ls);
     imshow(angular_error_ls, 'Border','tight');
@@ -81,11 +94,12 @@ for i=1:length(subjects)
     imshow(angular_error_ip, 'Border','tight');
     filePath = sprintf('%s/%s/%s-%s-angularerror.png', dataPath, subjects{i}, 'ip', subjects{i});
     print('-dpng',filePath);
-%% TODO    
-%     angular_error_pga = AngularError(nground, n_pga);
-%     imshow(angular_error_pga, 'Border','tight');
-%     filePath = sprintf('%s/%s/%s-%s-angularerror.png', dataPath, subjects{i}, 'pga', subjects{i});
-%     print('-dpng',filePath);  
+
+    angular_error_pga = AngularError(nground, n_pga);
+    imshow(angular_error_pga, 'Border','tight');
+    filePath = sprintf('%s/%s/%s-%s-angularerror.png', dataPath, subjects{i}, 'pga', subjects{i});
+    print('-dpng',filePath);  
+
     imshow(tex, 'Border','tight');
     filePath = sprintf('%s/%s/%sfull.png', dataPath, subjects{i}, subjects{i});
     print('-dpng',filePath);
@@ -100,9 +114,33 @@ for i=1:length(subjects)
     angular_error_all(3, 1) = sum(sum(angular_error_ele));
     angular_error_all(4, 1) = sum(sum(angular_error_ip));
     angular_error_all(5, 1) = sum(sum(angular_error_ls));
-% TODO     angular_error_all(6, 1) = sum(sum(angular_error_pga));
+    angular_error_all(6, 1) = sum(sum(angular_error_pga));
     angular_error_all(7, 1) = sum(sum(angular_error_spher));
 
     filePath = sprintf('%s/%s/angularerror.mat', dataPath, subjects{i});
     save(filePath, 'angular_error_all');
+
+    %%
+    height_error_aep = HeightError(nground, n_aep);
+    height_error_azi = HeightError(nground, n_azi);
+    height_error_ele = HeightError(nground, n_ele);
+    height_error_ip = HeightError(nground, n_ip);
+    height_error_ls = HeightError(nground, n_ls);
+    height_error_pga = HeightError(nground, n_pga);
+    height_error_spher = HeightError(nground, n_spher);
+
+    height_error_all = zeros(7, 1);
+    height_error_all(1, 1) = sum(sum(height_error_aep));
+    height_error_all(2, 1) = sum(sum(height_error_azi));
+    height_error_all(3, 1) = sum(sum(height_error_ele));
+    height_error_all(4, 1) = sum(sum(height_error_ip));
+    height_error_all(5, 1) = sum(sum(height_error_ls));
+    height_error_all(6, 1) = sum(sum(height_error_pga));
+    height_error_all(7, 1) = sum(sum(height_error_spher));
+
+    filePath = sprintf('%s/%s/heighterror.mat', dataPath, subjects{i});
+    save(filePath, 'height_error_all');
 end
+%%
+BuildAngularErrorMatrix
+BuildHeightErrorMatrix
