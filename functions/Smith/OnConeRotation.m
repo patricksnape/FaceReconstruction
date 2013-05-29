@@ -2,7 +2,7 @@ function n = OnConeRotation(theta, nprime, s)
     % 3 x N format
     nprime = reshape2colvector(nprime);
     % repmat to match 3 x N format above
-    svec = repmat(s', 1, size(nprime, 2));
+    svec = repmat(s, 1, size(nprime, 2));
     
     % cross product and break in to row vectors
     C = cross(nprime, svec);
