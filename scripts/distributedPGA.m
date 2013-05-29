@@ -1,6 +1,6 @@
 %% Assumes CreateData has been run. Calculates all spherical medians.
 clc;
-worker_count = 20;
+worker_count = 25;
 % Get a handle to the job manager:
 cluster =  parcluster('beehive');
 
@@ -126,18 +126,14 @@ clear normals i D_cell;
 % Calculate Average D
 
 disp('Generating DAvg');
-D_avg = zeros(N * 3, 1);
-vk = zeros(3, N);
 
 % for all normals
-parfor k = 1:N   
-    vk(:, k) = logmap(mus(:, k), mean_normals_set(:, k));
-end
-D_avg(:, 1) = reshape(vk, [], 1);
+vk = logmap(mus, mean_normals_set);
+D_avg = reshape(vk, [], 1);
 disp('Finished generating PGA');
 
 % Clean-up workspace
 clear normals vk i k vec_normals worker_count base djob cluster K N err mean_normals_set;
 
-save('pga_F001_disgust_zbuffer.mat', 'D', 'D_avg', 'mus', 'I_model');
+save('pga_trainingset.mat', 'D', 'D_avg', 'mus');
 toc;

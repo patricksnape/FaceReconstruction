@@ -4,13 +4,11 @@ function [delta_mu] = sphericalmedian(guess, normals)
 
 % Function body if we are using fminsearch
 K = size(normals, 2);
-delta_mu = 0;
 
-for i = 1:K
-    l = logmap(guess, normals(:, i));
-    delta_mu = delta_mu + norm(l);
-end
-delta_mu = delta_mu / K;
+guess_vec = repmat(guess, 3, []);
+
+l = logmap(guess_vec, normals);
+delta_mu = sum(colnorm(l)) / K;
 
 % K = size(normals, 2);
 % delta_mu = [0;0;0];

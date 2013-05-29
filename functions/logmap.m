@@ -22,25 +22,27 @@ switch arg.Projection
 
 end
 
+% TODO: Vectorise me
 function v = stereographic(b, q)
-% dist(-b,x)
-dist_nbx = norm(b + q);
-% dist(b,x)
-dist_bx = norm(q - b);
-
-alpha = acos((4 + (dist_nbx ^ 2) - (dist_bx ^ 2)) / (4 * dist_nbx));
-
-vprime = ((2 * (b + q)) / (dist_nbx * cos(alpha))) - b;
-
-theta = acos(dot(b,q));
-
-v = b + ((theta .* (vprime - b)) / norm(vprime - b));
+% % dist(-b,x)
+% dist_nbx = norm(b + q);
+% % dist(b,x)
+% dist_bx = norm(q - b);
+% 
+% alpha = acos((4 + (dist_nbx ^ 2) - (dist_bx ^ 2)) / (4 * dist_nbx));
+% 
+% vprime = ((2 * (b + q)) / (dist_nbx * cos(alpha))) - b;
+% 
+% theta = acos(dot(b,q));
+% 
+% v = b + ((theta .* (vprime - b)) / norm(vprime - b));
 
 function v = sphere_projection(b, q)
-theta = dot(b, q);
+% Any zero length vectors should remain the base vector
+zero_indices = find(sum(abs(q)) == 0);
 
-if theta == 0
-   v = b;
-else
-    v = (theta / sin(theta)) * (q - b * cos(theta));
-end
+theta = repmat(dot(b, q), 3, []);
+v = (theta ./ sin(theta)) .* (q - b .* cos(theta));
+
+% Map base vectors back
+v(:, zero_indices) = b(:, zero_indices);

@@ -41,11 +41,8 @@ disp('Generating D');
 % for each face
 for i = 1:K
     normals = squeeze(vec_normals(:, :, i));
-    vk = zeros(3, N);
     % for all normals
-    parfor k = 1:N
-        vk(:, k) = logmap(mus(:, k), normals(:, k));
-    end
+    vk = logmap(mus, normals);
     D(:, i) = reshape(vk, [], 1);
 end
 
@@ -56,12 +53,9 @@ clear vk;
 
 disp('Generating DAvg');
 D_avg = zeros(N * 3, 1);
-vk = zeros(3, N);
 
-% for all normals
-parfor k = 1:N   
-    vk(:, k) = logmap(mus(:, k), mean_normals_set(:, k));
-end
+% for all normals 
+vk = logmap(mus, mean_normals_set);
 D_avg(:, 1) = reshape(vk, [], 1);
 disp('Finished generating DAvg');
 

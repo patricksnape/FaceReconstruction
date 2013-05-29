@@ -29,11 +29,7 @@ switch error_metric
         Xn_avg = Un_avg;
     case 'PGA'
         mus = opts.mus;
-        col = reshape2colvector(X_corrupted);
-        Xn_norm = zeros(size(col));
-        for i=1:size(col, 2)
-            Xn_norm(:, i) = logmap(mus(:, i), col(:, i));
-        end
+        Xn_norm = logmap(mus, reshape2colvector(X_corrupted));
         Xn_norm = Xn_norm(:);
         Xn_avg = zeros(size(Xn_norm, 1), 1);
     case 'AZI'
@@ -56,11 +52,7 @@ switch error_metric
     case 'AEP'    
         Xtilde = azimuthal2spherical(Xtilde, Un_avg);
     case 'PGA'
-        col = reshape2colvector(Xtilde);
-        Xtilde = zeros(size(col));
-        for i=1:size(col, 2)
-            Xtilde(:, i) = expmap(mus(:, i), col(:, i));
-        end
+        Xtilde = expmap(mus, reshape2colvector(Xtilde));
         Xtilde = Xtilde(:);
     case 'AZI'
         X_spher = reshape(X_spher, 4, []);

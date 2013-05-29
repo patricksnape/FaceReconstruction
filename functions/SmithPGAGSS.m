@@ -20,14 +20,16 @@ function [ n, b, error ] = SmithPGAGSS(texture, U, normal_avg, s, mus, theta)
     if (nargin < 6)
         % normalize so it is in the range 0 to 1
         % intensity can never be < 0
-        theta = abs(acos(((double(texture) / double(max(max(texture)))))));
+        theta = acos(double(texture));
         theta(theta < 0) = 0;
     end
     
     n = EstimateNormalsAvg(normal_avg, theta);
-    theta = theta(:);
     npp = zeros(size(n));
     error = zeros(1, 10);
+    theta_vec = repmat(Image2ColVector(theta)', 3, []);
+
+    s_vec = repmat(s, 1, size(mus, 2));
 
     for i = 1:10
         error(i) = sum(real(acos(dot(reshape2colvector(n), reshape2colvector(npp)))));
@@ -36,37 +38,25 @@ function [ n, b, error ] = SmithPGAGSS(texture, U, normal_avg, s, mus, theta)
         end
         
         % Loop until convergence
-        ncol = reshape2colvector(n);
-        v0 = ncol;
-        for p = 1:size(ncol, 2)
-            v0(:, p) = logmap(mus(:, p), ncol(:, p));
-        end
-        v0 = reshape(v0, [], 1); 
+        v0 = logmap(mus, reshape2colvector(n));
+        v0 = reshape(v0, [], 1);
 
         % vector of best-fit parameters
         b = U' * v0;
         % transformed coordinates
         vprime = U * b;
 
-        vcol = reshape2colvector(vprime);
-        nprime = vcol;
-        for p = 1:size(vcol, 2)
-            nprime(:, p) = expmap(mus(:, p), vcol(:, p));
-        end
-        nprime = reshape(nprime, [], 1); 
+        % Convert backt o normals
+        nprime = expmap(mus, reshape2colvector(vprime));
         
         % Normalize
-        nprime = reshape2colvector(nprime);
-        nprime = bsxfun(@rdivide, nprime, colnorm(nprime));
+        nprime = nprime ./ repmat(colnorm(nprime), 3, []);
         
         % Rotate back to on cone normal by projecting on to the tangent
         % plane defined by the light vector
-        npp = nprime;
-        for p = 1:size(npp, 2)
-            log_s_npp = logmap(s, npp(:, p));
-            vec = acos(theta(p)) * (log_s_npp / norm(log_s_npp));
-            npp(:, p) = expmap(s, vec);
-        end
+        log_s_npp = logmap(s_vec, nprime);
+        vec = theta_vec .* (log_s_npp ./ repmat(colnorm(log_s_npp), 3, []));
+        npp = expmap(s_vec, vec);
         npp = reshape(npp, [], 1);
     end
     
