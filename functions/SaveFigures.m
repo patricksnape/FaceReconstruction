@@ -1,17 +1,18 @@
 function SaveFigures(subject, tech, n, tex, texrecov)
     close all;
-    hfig=figure(1);
+    hfig = figure(1);
     dataPath = 'data/results';
 
     set(hfig,...
-        'InvertHardcopy','off',...
-        'Position',[300 300 170 150],... %[left, bottom, width, height]
-        'PaperPositionMode','auto',...
-        'Color',[0 0 0]); % black
+        'InvertHardcopy', 'off',...
+        'Position', [300 300 170 150],... %[left, bottom, width, height]
+        'PaperPositionMode', 'auto',...
+        'Color', [0 0 0]);
 
     TexturizeRecoveredFace(tex, n);
     saveas(hfig, sprintf('%s/%s/%s-%s.fig', dataPath, subject, tech, subject));
-     
+    set(hfig, 'visible', 'off');
+
     % Chin
     view([128 30])
     filePath = sprintf('%s/%s/%s-%s-chin.png', dataPath, subject, tech, subject);
