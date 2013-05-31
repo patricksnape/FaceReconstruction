@@ -8,8 +8,8 @@ errors = cell(7, num_eigs);
 
 for e=1:num_eigs
         errors{1, e} = sum(normal_reconstruction_error(I_model_corrupt, uncorrupted_image, corrupted_image, 'AEP', e));
-        errors{2, e} = sum(normal_reconstruction_error(I_model_corrupt, uncorrupted_image, corrupted_image, 'AZI', e));
-        errors{3, e} = sum(normal_reconstruction_error(I_model_corrupt, uncorrupted_image, corrupted_image, 'ELE', e));
+%         errors{2, e} = sum(normal_reconstruction_error(I_model_corrupt, uncorrupted_image, corrupted_image, 'AZI', e));
+%         errors{3, e} = sum(normal_reconstruction_error(I_model_corrupt, uncorrupted_image, corrupted_image, 'ELE', e));
         errors{4, e} = sum(normal_reconstruction_error(I_model_corrupt, uncorrupted_image, corrupted_image, 'IP', e));
         errors{5, e} = sum(normal_reconstruction_error(I_model_corrupt, uncorrupted_image, corrupted_image, 'LS', e));
         errors{6, e} = sum(normal_reconstruction_error(D_corrupt,       uncorrupted_image, corrupted_image, 'PGA', e, 'mus', mus_corrupt));

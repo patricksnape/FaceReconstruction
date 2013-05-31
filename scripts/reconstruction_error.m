@@ -39,11 +39,9 @@ toc;
 % Reshape outputs - every cell is a single result
 
 %% Generate Figure
-var = 1:num_eigs;
-
 aep = zeros(num_images, num_eigs);
-azi = zeros(num_images, num_eigs);
-ele = zeros(num_images, num_eigs);
+% azi = zeros(num_images, num_eigs);
+% ele = zeros(num_images, num_eigs);
 ip = zeros(num_images, num_eigs);
 ls = zeros(num_images, num_eigs);
 pga = zeros(num_images, num_eigs);
@@ -52,33 +50,38 @@ spher = zeros(num_images, num_eigs);
 for k=1:num_images
     im = reconstructions_cell{k};
     aep(k, :) = cell2mat(im(1, :));
-    azi(k, :) = cell2mat(im(2, :));
-    ele(k, :) = cell2mat(im(3, :));
+%     azi(k, :) = cell2mat(im(2, :));
+%     ele(k, :) = cell2mat(im(3, :));
     ip(k, :) = cell2mat(im(4, :));
     ls(k, :) = cell2mat(im(5, :));
     pga(k, :) = cell2mat(im(6, :));
     spher(k, :) = cell2mat(im(7, :));
 end
 
-clear k e im;
+clear k im;
+
+%% Generate Figure
+var = 1:num_eigs;
 
 aep_mean = mean(aep, 1);
-azi_mean = mean(azi, 1);
-ele_mean = mean(ele, 1);
+% azi_mean = mean(azi, 1);
+% ele_mean = mean(ele, 1);
 ip_mean = mean(ip, 1);
 ls_mean = mean(ls, 1);
 pga_mean = mean(pga, 1);
 spher_mean = mean(spher, 1);
 
-figure; 
-plot(   var, aep_mean, 'r:*', ...
-        var, azi_mean, 'g:*', ...
-        var, ele_mean, 'm:*', ...
-        var, ip_mean, 'r:^', ...
+f = figure; 
+plot(   var, aep_mean, 'r:s', ...
+        var, ip_mean, 'r:+', ...
         var, ls_mean, 'b:*',  ...
-        var, pga_mean, 'b:^', ...
+        var, pga_mean, 'b:o', ...
         var, spher_mean, 'm:^', ...
      'MarkerSize',11, 'linewidth', 2); 
+%         var, azi_mean, 'g:*', ...
+%         var, ele_mean, 'm:*', ...
 ylabel('Angular error from reconstruction', 'fontsize', 15);
 xlabel('Number of components k', 'fontsize', 15);
-legend(gca, 'AEP-PCA', 'AZI-PCA', 'ELE-PCA', 'IP-PCA', 'L2-PCA', 'PGA', 'SPHER-PCA');
+% legend(gca, 'AEP-PCA', 'AZI-PCA', 'ELE-PCA', 'IP-PCA', 'L2-PCA', 'PGA', 'SPHER-PCA');
+legend(gca, 'AEP-PCA', 'IP-PCA', 'L2-PCA', 'PGA', 'SPHER-PCA', 'Location', 'SouthEast');
+set(f, 'Position', [0, 0, 640, 480]);

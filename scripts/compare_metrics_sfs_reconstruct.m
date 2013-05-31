@@ -22,12 +22,12 @@ for i=1:length(subjects)
     %%
     display('AEP');
     n_aep = SmithGSS_generic('AEP', rgb2gray(tex), Un_aep, Xn_avg, light);
-    %%
-    display('AZI');
-    n_azi = SmithGSS_generic('AZI', rgb2gray(tex), Un_azi, Xn_avg, light);
-    %%
-    display('ELE');
-    n_ele = SmithGSS_generic('ELE', rgb2gray(tex), Un_ele, Xn_avg, light);
+%     %%
+%     display('AZI');
+%     n_azi = SmithGSS_generic('AZI', rgb2gray(tex), Un_azi, Xn_avg, light);
+%     %%
+%     display('ELE');
+%     n_ele = SmithGSS_generic('ELE', rgb2gray(tex), Un_ele, Xn_avg, light);
     %%
     display('IP');
     n_ip = SmithGSS_generic('IP', rgb2gray(tex), Un_ip, Xn_avg, light);
@@ -46,8 +46,8 @@ for i=1:length(subjects)
     [nground, groundtex] = FourImagePhotometricStereo(eval(subjects{i}));
     %%
     SaveFigures(subjects{i}, 'aep', n_aep, rgb2gray(tex));
-    SaveFigures(subjects{i}, 'azi', n_azi, rgb2gray(tex));
-    SaveFigures(subjects{i}, 'ele', n_ele, rgb2gray(tex));
+%     SaveFigures(subjects{i}, 'azi', n_azi, rgb2gray(tex));
+%     SaveFigures(subjects{i}, 'ele', n_ele, rgb2gray(tex));
     SaveFigures(subjects{i}, 'ip', n_ip, rgb2gray(tex));
     SaveFigures(subjects{i}, 'ls', n_ls, rgb2gray(tex));
     SaveFigures(subjects{i}, 'pga', n_pga, rgb2gray(tex));
@@ -80,15 +80,15 @@ for i=1:length(subjects)
     filePath = sprintf('%s/%s/%s-%s-angularerror.png', dataPath, subjects{i}, 'spher', subjects{i});
     print('-dpng',filePath);
     
-    angular_error_azi = AngularError(nground, n_azi);
-    imshow(angular_error_azi, 'Border','tight');
-    filePath = sprintf('%s/%s/%s-%s-angularerror.png', dataPath, subjects{i}, 'azi', subjects{i});
-    print('-dpng',filePath);
-    
-    angular_error_ele = AngularError(nground, n_ele);
-    imshow(angular_error_ele, 'Border','tight');
-    filePath = sprintf('%s/%s/%s-%s-angularerror.png', dataPath, subjects{i}, 'ele', subjects{i});
-    print('-dpng',filePath);
+%     angular_error_azi = AngularError(nground, n_azi);
+%     imshow(angular_error_azi, 'Border','tight');
+%     filePath = sprintf('%s/%s/%s-%s-angularerror.png', dataPath, subjects{i}, 'azi', subjects{i});
+%     print('-dpng',filePath);
+%     
+%     angular_error_ele = AngularError(nground, n_ele);
+%     imshow(angular_error_ele, 'Border','tight');
+%     filePath = sprintf('%s/%s/%s-%s-angularerror.png', dataPath, subjects{i}, 'ele', subjects{i});
+%     print('-dpng',filePath);
     
     angular_error_ip = AngularError(nground, n_ip);
     imshow(angular_error_ip, 'Border','tight');
@@ -110,8 +110,8 @@ for i=1:length(subjects)
     
     angular_error_all = zeros(7, 1);
     angular_error_all(1, 1) = sum(sum(angular_error_aep));
-    angular_error_all(2, 1) = sum(sum(angular_error_azi));
-    angular_error_all(3, 1) = sum(sum(angular_error_ele));
+%     angular_error_all(2, 1) = sum(sum(angular_error_azi));
+%     angular_error_all(3, 1) = sum(sum(angular_error_ele));
     angular_error_all(4, 1) = sum(sum(angular_error_ip));
     angular_error_all(5, 1) = sum(sum(angular_error_ls));
     angular_error_all(6, 1) = sum(sum(angular_error_pga));
@@ -122,8 +122,8 @@ for i=1:length(subjects)
 
     %%
     height_error_aep = HeightError(nground, n_aep);
-    height_error_azi = HeightError(nground, n_azi);
-    height_error_ele = HeightError(nground, n_ele);
+%     height_error_azi = HeightError(nground, n_azi);
+%     height_error_ele = HeightError(nground, n_ele);
     height_error_ip = HeightError(nground, n_ip);
     height_error_ls = HeightError(nground, n_ls);
     height_error_pga = HeightError(nground, n_pga);
@@ -131,8 +131,8 @@ for i=1:length(subjects)
 
     height_error_all = zeros(7, 1);
     height_error_all(1, 1) = sum(sum(height_error_aep));
-    height_error_all(2, 1) = sum(sum(height_error_azi));
-    height_error_all(3, 1) = sum(sum(height_error_ele));
+%     height_error_all(2, 1) = sum(sum(height_error_azi));
+%     height_error_all(3, 1) = sum(sum(height_error_ele));
     height_error_all(4, 1) = sum(sum(height_error_ip));
     height_error_all(5, 1) = sum(sum(height_error_ls));
     height_error_all(6, 1) = sum(sum(height_error_pga));
