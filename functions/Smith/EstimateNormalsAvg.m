@@ -1,7 +1,7 @@
 function nestimates = EstimateNormalsAvg(mu, theta)   
     muim = reshape2colvector(mu);
     muim = bsxfun(@rdivide, muim, colnorm(muim));
-    muim = ColVectorToImage3(reshape(muim,[],1), size(theta, 1), size(theta, 2));
+    muim = ColVectorToImage3(muim, size(theta, 1), size(theta, 2));
     
     % Could have some division by zero...
     norm = sqrt(muim(:,:,1).^2 + muim(:,:,2).^2);

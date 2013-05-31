@@ -1,6 +1,5 @@
 %% Assumes CreateData has been run. Calculates all spherical medians.
-clc;
-worker_count = 25;
+worker_count = 50;
 % Get a handle to the job manager:
 cluster =  parcluster('beehive');
 
@@ -20,7 +19,6 @@ end
 
 % Reshape so that every column is stacked behind one another
 % This is so we can parfor the min finding
-vec_normals = reshape(normals_set, [size(normals_set, 1), 1, size(normals_set, 2)]);
 vec_normals = reshape(normals_set, [3, size(normals_set, 1) / 3, size(normals_set, 2)]);
 
 mean_normals_set = mean(vec_normals, 3);
@@ -39,7 +37,7 @@ try
         maxval = min(i + stride, N);
         normalp = squeeze(vec_normals(:, i:maxval, :));
         mean_normalp = mean_normals_set(:, i:maxval);
-        createTask(djob, @spherical_median_wrapper, 1, {normalp, mean_normalp});
+        createTask(djob, @spherical_median_wrapper_will, 1, {normalp, mean_normalp, projection_type});
         i = i + stride + 1;
     end
 
@@ -90,7 +88,7 @@ disp('Generating D');
 try
     for i = 1:K
         normals = squeeze(vec_normals(:, :, i));
-        createTask(djob, @calculate_D_wrapper, 1, {normals, mus});
+        createTask(djob, @calculate_D_wrapper, 1, {normals, mus, projection_type});
     end
     submit(djob);
     % Have the program wait for it to finish:
@@ -115,25 +113,12 @@ if exist('djob', 'var') && strcmp(djob.State, 'deleted') == 0
 end
 
 % Column vector
-D = zeros(N * 3, K);
+D = zeros(size(D_cell{1}, 1), K);
 
 for i=1:K
    D(:, i) = D_cell{i};
 end
 
-clear normals i D_cell;
-
-% Calculate Average D
-
-disp('Generating DAvg');
-
-% for all normals
-vk = logmap(mus, mean_normals_set);
-D_avg = reshape(vk, [], 1);
-disp('Finished generating PGA');
-
 % Clean-up workspace
-clear normals vk i k vec_normals worker_count base djob cluster K N err mean_normals_set;
-
-save('pga_trainingset.mat', 'D', 'D_avg', 'mus');
+clear D_cell normals vk i k vec_normals worker_count base djob cluster K N err mean_normals_set;
 toc;

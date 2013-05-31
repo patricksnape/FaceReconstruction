@@ -51,7 +51,7 @@ function [ n, b, error ] = SmithGSS_generic(error_metric, texture, U, normal_avg
             case 'LS'
                 v0 = matsubcolvec(n, normal_avg);
             case 'PGA'
-                v0 = logmap(arg.mus, reshape2colvector(n));
+                v0 = logmap(arg.mus, reshape2colvector(n), 'william');
                 v0 = reshape(v0, [], 1);
             case 'AZI'
                 [v0, X_spher] = normals2azimuth(n);
@@ -70,7 +70,7 @@ function [ n, b, error ] = SmithGSS_generic(error_metric, texture, U, normal_avg
             case 'AEP'    
                 nprime = azimuthal2spherical(vprime, normal_avg);
             case 'PGA'
-                nprime = expmap(arg.mus, reshape2colvector(vprime));
+                nprime = expmap(arg.mus, reshape2colvector(vprime), 'william');
             case 'AZI'
                 X_spher = reshape(X_spher, 4, []);
                 X_ele = X_spher(3:4, :);

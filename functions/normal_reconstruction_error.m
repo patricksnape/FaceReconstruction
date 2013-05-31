@@ -6,6 +6,7 @@ inp = inputParser;
 
 % Default feature vectors
 inp.addOptional('mus', [], @(x) size(x,1) == 3);
+inp.addOptional('projection_type', 'sphere');
 
 inp.parse(varargin{:});
 opts = inp.Results;
@@ -28,8 +29,7 @@ switch error_metric
         Xn_norm = matsubcolvec(X_corrupted, Un_avg);
         Xn_avg = Un_avg;
     case 'PGA'
-        mus = opts.mus;
-        Xn_norm = logmap(mus, reshape2colvector(X_corrupted));
+        Xn_norm = logmap(opts.mus, reshape2colvector(X_corrupted), opts.projection_type);
         Xn_norm = Xn_norm(:);
         Xn_avg = zeros(size(Xn_norm, 1), 1);
     case 'AZI'
@@ -52,7 +52,7 @@ switch error_metric
     case 'AEP'    
         Xtilde = azimuthal2spherical(Xtilde, Un_avg);
     case 'PGA'
-        Xtilde = expmap(mus, reshape2colvector(Xtilde));
+        Xtilde = expmap(opts.mus, reshape2colvector(Xtilde), opts.projection_type);
         Xtilde = Xtilde(:);
     case 'AZI'
         X_spher = reshape(X_spher, 4, []);
