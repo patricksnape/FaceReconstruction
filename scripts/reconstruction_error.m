@@ -11,7 +11,7 @@ djob = createJob(cluster, 'NumWorkersRange', [1 worker_count]);
 
 try
     for k=1:num_images
-        createTask(djob, @reconstruction_error_wrapper, 1, {I_model_corrupt, D_corrupt, I_model(:, k), I_model_corrupt(:, k), mus_corrupt, num_eigs});
+        createTask(djob, @reconstruction_error_wrapper, 1, {I_model_corrupt, D_corrupt, I_model(:, k), I_model_corrupt(:, k), mus_corrupt, num_eigs, projection_type});
     end
     submit(djob);
 
