@@ -7,7 +7,7 @@ inp = inputParser;
 
 % Default to sphere projection
 validProjection = {'stereographic','sphere', 'william'};
-inp.addOptional('Projection', validProjection{3}, @(x)any(strcmpi(x,validProjection)));
+inp.addOptional('Projection', validProjection{2}, @(x)any(strcmpi(x,validProjection)));
 
 inp.parse(varargin{:});
 arg = inp.Results;
@@ -27,6 +27,7 @@ n = real(n);
 
 % TODO: Vectorise me
 function n = stereographic(b, v)
+v = reshape2colvector(v, 3);
 % Any zero length vectors should remain the base vector
 zero_indices = find(sum(abs(v)) == 0);
 
@@ -48,6 +49,7 @@ n(:, zero_indices) = b(:, zero_indices);
 n(isnan(n)) = b(isnan(n));
 
 function n = sphere_projection(b, v)
+v = reshape2colvector(v, 3);
 % Any zero length vectors should remain the base vector
 zero_indices = find(sum(abs(v)) == 0);
 

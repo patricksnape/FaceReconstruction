@@ -38,7 +38,7 @@ function [ n, b, error ] = SmithPGAGSS(texture, U, normal_avg, s, mus, theta)
         end
         
         % Loop until convergence
-        v0 = logmap(mus, reshape2colvector(n));
+        v0 = logmap(mus, n);
         v0 = reshape(v0, [], 1);
 
         % vector of best-fit parameters

@@ -27,6 +27,7 @@ v = real(v);
 
 % TODO: Vectorise me
 function v = stereographic(b, q)
+q = reshape2colvector(q, 3);
 % Any zero length vectors should remain the base vector
 zero_indices = find(sum(abs(q)) == 0);
 
@@ -48,6 +49,7 @@ v(:, zero_indices) = b(:, zero_indices);
 v(isnan(v)) = b(isnan(v));
 
 function v = sphere_projection(b, q)
+q = reshape2colvector(q, 3);
 % Any zero length vectors should remain the base vector
 zero_indices = find(sum(abs(q)) == 0);
 
@@ -58,5 +60,6 @@ v = (theta ./ sin(theta)) .* (q - b .* cos(theta));
 v(:, zero_indices) = b(:, zero_indices);
 
 function v = william_projection(b, q)
+q = reshape2colvector(q, 3);
 
 v = PGSFS_KLogs(q, b);

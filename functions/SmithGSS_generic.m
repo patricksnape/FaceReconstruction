@@ -24,6 +24,7 @@ function [ n, b, error ] = SmithGSS_generic(error_metric, texture, U, normal_avg
 
     % Default to sphere projection
     inp.addOptional('mus', []);
+    inp.addOptional('projection_type', 'sphere')
     inp.addOptional('theta', estimate_theta_from_intensity(texture));
 
     inp.parse(varargin{:});
@@ -51,7 +52,7 @@ function [ n, b, error ] = SmithGSS_generic(error_metric, texture, U, normal_avg
             case 'LS'
                 v0 = matsubcolvec(n, normal_avg);
             case 'PGA'
-                v0 = logmap(arg.mus, reshape2colvector(n), 'william');
+                v0 = logmap(arg.mus, n, arg.projection_type);
                 v0 = reshape(v0, [], 1);
             case 'AZI'
                 [v0, X_spher] = normals2azimuth(n);
@@ -70,7 +71,7 @@ function [ n, b, error ] = SmithGSS_generic(error_metric, texture, U, normal_avg
             case 'AEP'    
                 nprime = azimuthal2spherical(vprime, normal_avg);
             case 'PGA'
-                nprime = expmap(arg.mus, reshape2colvector(vprime), 'william');
+                nprime = expmap(arg.mus, vprime, arg.projection_type);
             case 'AZI'
                 X_spher = reshape(X_spher, 4, []);
                 X_ele = X_spher(3:4, :);
